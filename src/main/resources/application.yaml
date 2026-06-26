@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: price-tracker
+
+app:
+  playstation:
+    base-url: https://store.playstation.com
