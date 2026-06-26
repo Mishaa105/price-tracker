@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 public class PriceTrackerApplication
 {
 
-    public static void main(String[] args)
+    static void main(String[] args)
     {
         SpringApplication.run(PriceTrackerApplication.class, args);
     }
@@ -23,7 +23,8 @@ public class PriceTrackerApplication
     {
         return args ->
         {
-            parser.extractTest(client);
+            String data = parser.extractJson(client.htmlLoader());
+            parser.test(parser.deserialization(data));
         };
     }
 

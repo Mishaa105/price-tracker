@@ -22,7 +22,7 @@ public class Client
         Document htmlDoc;
         String region = "/en-us";
         String productTag = "/product/";
-        String gameId = "UP0102-PPSA30803_00-REREQUIEM0000000";
+        String gameId = "EP4361-PPSA16608_00-0834831119349003";
         String url = baseUrl + region + productTag + gameId;
         // В будущем сюда будет внедрена система поиска, которая будет дополнять baseUrl в зависимости от запроса пользователя
 
@@ -36,10 +36,4 @@ public class Client
 
         return htmlDoc;
     }
-
-    public void testPrint()
-    {
-        System.out.println(htmlLoader());
-    }
-
 }
