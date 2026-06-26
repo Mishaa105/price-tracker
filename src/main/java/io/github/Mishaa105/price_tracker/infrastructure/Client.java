@@ -20,10 +20,15 @@ public class Client
     public Document htmlLoader()
     {
         Document htmlDoc;
+        String region = "/en-us";
+        String productTag = "/product/";
+        String gameId = "UP0102-PPSA30803_00-REREQUIEM0000000";
+        String url = baseUrl + region + productTag + gameId;
+        // В будущем сюда будет внедрена система поиска, которая будет дополнять baseUrl в зависимости от запроса пользователя
+
         try
         {
-            htmlDoc = Jsoup.connect(baseUrl).get();
-            // В будущем сюда будет внедрена система поиска, которая будет дополнять baseUrl в зависимости от запроса пользователя
+            htmlDoc = Jsoup.connect(url).get();
         } catch (IOException e)
         {
             throw new RuntimeException(e);
