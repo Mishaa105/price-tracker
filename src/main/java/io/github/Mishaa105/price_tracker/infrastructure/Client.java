@@ -10,7 +10,7 @@ import java.io.IOException;
 @Component
 public class Client
 {
-    private String baseUrl;
+    private final String baseUrl;
 
     public Client(Config config)
     {
@@ -22,7 +22,7 @@ public class Client
         Document htmlDoc;
         String region = "/en-us";
         String productTag = "/product/";
-        String gameId = "EP4361-PPSA16608_00-0834831119349003";
+        String gameId = "UP0001-PPSA01518_00-STANDARDEDITION0";
         String url = baseUrl + region + productTag + gameId;
         // В будущем сюда будет внедрена система поиска, которая будет дополнять baseUrl в зависимости от запроса пользователя
 
