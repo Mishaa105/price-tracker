@@ -21,7 +21,7 @@ public class PriceTrackerApplication
     @Bean
     public CommandLineRunner run(Client client, Parser parser)
     {
-        return args ->
+        return _ ->
         {
             String data = parser.extractJson(client.htmlLoader());
             parser.test(parser.deserialization(data));

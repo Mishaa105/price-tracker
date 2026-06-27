@@ -1,10 +1,15 @@
 package io.github.Mishaa105.price_tracker.infrastructure;
 
+import io.github.Mishaa105.price_tracker.records.ExclusiveDiscountData;
 import io.github.Mishaa105.price_tracker.records.PlayStationResponse;
+import io.github.Mishaa105.price_tracker.records.SkuPriceDetail;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
+
+import java.util.Collection;
+import java.util.List;
 
 @Component
 public class Parser
@@ -38,5 +43,16 @@ public class Parser
         String basePrice = String.valueOf(response.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue());
         String discountedPrice = String.valueOf(response.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue());
         System.out.println(name + " " + basePrice + " " + discountedPrice);
+        Collection<ExclusiveDiscountData> excDiscounts = response.cache().exclusiveDiscount();
+
+        for(ExclusiveDiscountData discount : excDiscounts)
+        {
+            List<SkuPriceDetail> skuPriceDetails = discount.local().telemetryMeta().skuDetail().skuPriceDetail();
+            int priceWithDiscount = skuPriceDetails.getFirst().discountPriceValue();
+            String priceCond = skuPriceDetails.getFirst().offerBranding();
+
+            System.out.println("Стоимость товара составляет " + priceWithDiscount + " при наличии " + priceCond);
+        }
+
     }
 }
