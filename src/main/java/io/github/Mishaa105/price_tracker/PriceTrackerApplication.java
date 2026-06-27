@@ -2,6 +2,7 @@ package io.github.Mishaa105.price_tracker;
 
 import io.github.Mishaa105.price_tracker.infrastructure.Client;
 import io.github.Mishaa105.price_tracker.infrastructure.Parser;
+import org.jsoup.nodes.Document;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,9 +24,19 @@ public class PriceTrackerApplication
     {
         return _ ->
         {
-            String data = parser.extractJson(client.htmlLoader());
-            parser.test(parser.deserialization(data));
+            Document htmlDoc = client.htmlLoader();
+            
+            if(htmlDoc == null)
+            {
+                return;
+            }
+
+            String data = parser.extractJson(htmlDoc);
+
+            if(data != null)
+            {
+                parser.test(parser.deserialization(data));
+            }
         };
     }
-
 }
