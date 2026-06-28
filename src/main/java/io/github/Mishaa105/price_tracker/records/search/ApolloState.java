@@ -4,19 +4,20 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record ApolloState(Map<String, Product> products)
+public record ApolloState(@JsonDeserialize(as = LinkedHashMap.class) Map<String, Product> products)
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public ApolloState(Map<String, Product> products)
     {
-        this.products = products != null ? products : new HashMap<>();
+        this.products = products != null ? products : new LinkedHashMap<>();
     }
 
     public Collection<Product> getProducts()
