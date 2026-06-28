@@ -19,13 +19,30 @@ public class Client
         this.baseUrl = config.playstation().baseUrl();
     }
 
-    public Document htmlLoader()
+    public enum RequestType
     {
-        String region = "/en-us";
-        String productTag = "/product/";
-        String gameId = "UP0001-PPSA01518_00-STANDARDEDITION0";
-        String url = baseUrl + region + productTag + gameId;
-        // В будущем сюда будет внедрена система поиска, которая будет дополнять baseUrl в зависимости от запроса пользователя
+        SEARCH, PRODUCT
+    }
+
+    public Document htmlPageLoader(String region, RequestType requestType, String request)
+    {
+        String clearRequest = request.replaceAll(" ", "%20");
+
+        String tag = switch (requestType)
+        {
+            case SEARCH ->
+            {
+                log.info("Режим вывода страницы поиска");
+                yield "search/";
+            }
+            case PRODUCT ->
+            {
+                log.info("Режим вывода страницы продукта");
+                yield "product/";
+            }
+        };
+
+        String url = baseUrl + region + tag + clearRequest;
 
         log.debug("Отправка GET-запроса по адресу {}", url);
 
@@ -36,7 +53,7 @@ public class Client
             String finalUrl = response.url().toString();
             if (!finalUrl.equalsIgnoreCase(url))
             {
-                log.error("Игра с ID {} не найдена (переадресация на главную страницу)", gameId);
+                log.error("Игра с ID {} не найдена (переадресация на главную страницу)", request);
                 return null;
             }
 
@@ -51,7 +68,7 @@ public class Client
             {
                 if(statusCode == 404)
                 {
-                    log.error("Игра с ID {} не найдена (крайний случай)", gameId);
+                    log.error("Игра с ID {} не найдена (крайний случай)", request);
                 }
                 else
                 {
