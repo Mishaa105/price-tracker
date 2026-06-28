@@ -1,7 +1,9 @@
 package io.github.Mishaa105.price_tracker.controller;
 
 import io.github.Mishaa105.price_tracker.infrastructure.Client;
+import io.github.Mishaa105.price_tracker.records.product.ExclusiveDiscountData;
 import io.github.Mishaa105.price_tracker.records.product.PlayStationProductResponse;
+import io.github.Mishaa105.price_tracker.records.product.SkuPriceDetail;
 import io.github.Mishaa105.price_tracker.records.search.PlayStationSearchResponse;
 import io.github.Mishaa105.price_tracker.records.search.Product;
 import io.github.Mishaa105.price_tracker.service.ProductPageParser;
@@ -118,14 +120,33 @@ public class ConsoleController
                         data = responseProduct.cache().preorderPrice().local().offerAvailability();
                     }
 
+                    if(!(responseProduct.cache().subscriptionPriceData().isEmpty()))
+                    {
+                        originalPrice = (double) responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
+                        discountPrice = (double) responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
+                        data = responseProduct.cache().subscriptionPrice().local().offerAvailability();
+                    }
+
+                    if(!(responseProduct.cache().freeData().isEmpty()))
+                    {
+                        originalPrice = (double) responseProduct.cache().freePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
+                        discountPrice = (double) responseProduct.cache().freePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
+                        data = responseProduct.cache().freePrice().local().offerAvailability();
+                    }
+
                     System.out.println("Обычная цена: " + originalPrice + "$");
                     System.out.println("Цена по скидке : " + discountPrice + "$");
 
                     if (!(responseProduct.cache().exclusiveDiscountData().isEmpty()))
                     {
-                        double exclusivePrice = (double) responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
-                        String condition = responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().offerBranding();
-                        System.out.println("Цена при наличии " + condition + " : " + exclusivePrice + "$");
+                        for (ExclusiveDiscountData discountData : responseProduct.cache().exclusiveDiscount())
+                        {
+                            List<SkuPriceDetail> skuPriceDetails = discountData.local().telemetryMeta().skuDetail().skuPriceDetail();
+                            double exclusivePrice = (double) skuPriceDetails.getFirst().discountPriceValue() / 100;
+                            String condition = skuPriceDetails.getFirst().offerBranding();
+
+                            System.out.println("Цена при наличии " + condition + " : " + exclusivePrice + "$");
+                        }
                     }
 
                     System.out.println("Распродажа продлится до " + data);
@@ -148,3 +169,5 @@ public class ConsoleController
         }
     }
 }
+
+// Если при поиске null (ps plus) то скрываем и идем дальше не передвигая индекс
