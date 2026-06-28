@@ -1,6 +1,6 @@
-package io.github.Mishaa105.price_tracker.records;
+package io.github.Mishaa105.price_tracker.records.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Local(TelemetryMeta telemetryMeta) {}
+public record FreePrice(Local local) {}
