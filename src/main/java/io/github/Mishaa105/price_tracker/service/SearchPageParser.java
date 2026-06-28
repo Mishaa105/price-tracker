@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.infrastructure;
+package io.github.Mishaa105.price_tracker.service;
 
 import io.github.Mishaa105.price_tracker.records.search.PlayStationSearchResponse;
 import org.springframework.stereotype.Component;

@@ -4,26 +4,29 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Cache(Map<String, ExclusiveDiscountData> exclusiveDiscountData, Map<String, GameName> nameData,
-                    Map<String, BasePriceData> basePriceData, Map<String, PreorderPrice> preorderPriceData,
-                    Map<String, FreePrice> freeData, Map<String, SubscriptionPrice> subscriptionPriceData)
+public record Cache(@JsonDeserialize(as = LinkedHashMap.class) Map<String, ExclusiveDiscountData> exclusiveDiscountData,
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, GameName> nameData,
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, BasePriceData> basePriceData,
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, PreorderPrice> preorderPriceData,
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, FreePrice> freeData, Map<String, SubscriptionPrice> subscriptionPriceData)
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     public Cache(Map<String, ExclusiveDiscountData> exclusiveDiscountData, Map<String, GameName> nameData, Map<String, BasePriceData> basePriceData, Map<String, PreorderPrice> preorderPriceData, Map<String, FreePrice> freeData, Map<String, SubscriptionPrice> subscriptionPriceData)
     {
-        this.exclusiveDiscountData = exclusiveDiscountData != null ? exclusiveDiscountData : new HashMap<>();
-        this.nameData = nameData != null ? nameData : new HashMap<>();
-        this.basePriceData = basePriceData != null ? basePriceData : new HashMap<>();
-        this.preorderPriceData = preorderPriceData != null ? preorderPriceData : new HashMap<>();
-        this.freeData = freeData != null ? freeData : new HashMap<>();
-        this.subscriptionPriceData = subscriptionPriceData != null ? subscriptionPriceData : new HashMap<>();
+        this.exclusiveDiscountData = exclusiveDiscountData != null ? exclusiveDiscountData : new LinkedHashMap<>();
+        this.nameData = nameData != null ? nameData : new LinkedHashMap<>();
+        this.basePriceData = basePriceData != null ? basePriceData : new LinkedHashMap<>();
+        this.preorderPriceData = preorderPriceData != null ? preorderPriceData : new LinkedHashMap<>();
+        this.freeData = freeData != null ? freeData : new LinkedHashMap<>();
+        this.subscriptionPriceData = subscriptionPriceData != null ? subscriptionPriceData : new LinkedHashMap<>();
     }
 
     public GameName gameName()

@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.infrastructure;
+package io.github.Mishaa105.price_tracker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
