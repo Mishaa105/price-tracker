@@ -1,13 +1,13 @@
 package io.github.Mishaa105.price_tracker.controller;
 
-import io.github.Mishaa105.price_tracker.infrastructure.Client;
-import io.github.Mishaa105.price_tracker.records.product.ExclusiveDiscountData;
-import io.github.Mishaa105.price_tracker.records.product.PlayStationProductResponse;
-import io.github.Mishaa105.price_tracker.records.product.SkuPriceDetail;
-import io.github.Mishaa105.price_tracker.records.search.PlayStationSearchResponse;
-import io.github.Mishaa105.price_tracker.records.search.Product;
-import io.github.Mishaa105.price_tracker.service.ProductPageParser;
-import io.github.Mishaa105.price_tracker.service.SearchPageParser;
+import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
+import io.github.Mishaa105.price_tracker.dto.product.ExclusiveDiscountData;
+import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
+import io.github.Mishaa105.price_tracker.dto.product.SkuPriceDetail;
+import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
+import io.github.Mishaa105.price_tracker.dto.search.Product;
+import io.github.Mishaa105.price_tracker.service.ProductPageHtmlParser;
+import io.github.Mishaa105.price_tracker.service.SearchPageHtmlParser;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -25,9 +25,9 @@ public class ConsoleController
 
     Scanner scanner = new Scanner(System.in);
 
-    private final Client client;
-    private final SearchPageParser searchPageParser;
-    private final ProductPageParser productPageParser;
+    private final JsoupClient jsoupClient;
+    private final SearchPageHtmlParser searchPageParser;
+    private final ProductPageHtmlParser productPageParser;
 
     public void start()
     {
@@ -55,9 +55,9 @@ public class ConsoleController
                         return;
                     }
 
-                    Document htmlDoc = client.htmlPageLoader(region, Client.RequestType.SEARCH, request);
+                    Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.SEARCH, request);
                     String jsonData = searchPageParser.extractJson(htmlDoc);
-                    responseSearch = searchPageParser.deserialization(jsonData);
+                    responseSearch = searchPageParser.deserialize(jsonData);
                     productsList = new ArrayList<>(responseSearch.props().apolloState().getProducts());
 
                     state = States.CHOOSE;
@@ -95,9 +95,9 @@ public class ConsoleController
                 {
                     System.out.println("Страница выбранного вами товара");
 
-                    Document htmlDoc = client.htmlPageLoader(region, Client.RequestType.PRODUCT, id);
+                    Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
                     String jsonData = productPageParser.extractJson(htmlDoc);
-                    responseProduct = productPageParser.deserialization(jsonData);
+                    responseProduct = productPageParser.deserialize(jsonData);
 
                     String name = responseProduct.cache().gameName().invariantName();
                     double originalPrice = 0;
