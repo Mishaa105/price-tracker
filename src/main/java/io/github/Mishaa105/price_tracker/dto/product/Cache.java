@@ -1,21 +1,18 @@
 package io.github.Mishaa105.price_tracker.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record Cache(@JsonDeserialize(as = LinkedHashMap.class) Map<String, ExclusiveDiscountData> exclusiveDiscountData,
                     @JsonDeserialize(as = LinkedHashMap.class) Map<String, GameName> nameData,
                     @JsonDeserialize(as = LinkedHashMap.class) Map<String, BasePriceData> basePriceData,
                     @JsonDeserialize(as = LinkedHashMap.class) Map<String, PreorderPrice> preorderPriceData,
-                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, FreePrice> freeData, Map<String, SubscriptionPrice> subscriptionPriceData)
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, FreePrice> freeData,
+                    @JsonDeserialize(as = LinkedHashMap.class) Map<String, SubscriptionPrice> subscriptionPriceData)
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 
