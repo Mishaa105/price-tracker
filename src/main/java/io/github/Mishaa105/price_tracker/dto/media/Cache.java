@@ -25,7 +25,7 @@ public record Cache(@JsonDeserialize(as = LinkedHashMap.class) Map<String, Media
     @JsonAnySetter
     public void deserializationFieldsWithDynamicName(String key, JsonNode value)
     {
-        if (key.startsWith("Concept:"))
+        if (key.startsWith("Product:"))
         {
             mediaDataMap.put(key, mapper.treeToValue(value, MediaData.class));
         }
