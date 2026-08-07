@@ -14,8 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 public class Product
 {
+    public Product(String productId, String name, String invariantName, String previewUrl)
+    {
+        this.productId = productId;
+        this.name = name;
+        this.invariantName = invariantName;
+        this.previewUrl = previewUrl;
+    }
+
     @Id
-    private Long id;
+    private String productId;
 
     @Column
     private String name;

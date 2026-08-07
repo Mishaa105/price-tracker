@@ -12,7 +12,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CurrentPrice
 {
+    public CurrentPrice(Integer originalPrice, Integer discountPrise, String offerBranding, String priceCurrencyCode)
+    {
+        this.originalPrice = originalPrice;
+        this.discountPrise = discountPrise;
+        this.offerBranding = offerBranding;
+        this.priceCurrencyCode = priceCurrencyCode;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column
@@ -26,12 +35,6 @@ public class CurrentPrice
 
     @Column
     private String priceCurrencyCode;
-
-    @Column
-    private String lowestRecentPrice;
-
-    @Column
-    private String discountBadgeText;
 
     @ManyToOne
     @JoinColumn(name = "offer_id")

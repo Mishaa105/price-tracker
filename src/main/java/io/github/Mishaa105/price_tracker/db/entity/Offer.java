@@ -14,7 +14,15 @@ import java.util.List;
 @NoArgsConstructor
 public class Offer
 {
+    public Offer(String offerName, String startDate, String endDate)
+    {
+        this.offerName = offerName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column
