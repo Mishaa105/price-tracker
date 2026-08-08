@@ -52,6 +52,8 @@ public class DataBaseUpdateService
                 listOfId.addAll(product.getId());
             }
         }
+        log.info("Лист с {} айди получен", listOfId.size());
+        log.debug("Лист айди: {}", listOfId);
         return listOfId;
     }
 
@@ -59,6 +61,7 @@ public class DataBaseUpdateService
     {
         Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
         String jsonData = productPageParser.extractJson(htmlDoc);
+        log.info("Данные о продукте получены");
         return productPageParser.deserialize(jsonData);
     }
 
@@ -67,6 +70,7 @@ public class DataBaseUpdateService
         Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
         String jsonData = productMediaParser.extractJson(htmlDoc);
         ProductMediaResponse deserializedData = productMediaParser.deserialize(jsonData);
+        log.info("Превью получено");
         return deserializedData.getPreviewUrl();
     }
 
@@ -104,6 +108,7 @@ public class DataBaseUpdateService
                 batch.getPrices().add(allPrices);
             }
         }
+        log.info("Батч сформирован");
         return batch;
     }
 
@@ -113,24 +118,13 @@ public class DataBaseUpdateService
         offerRepository.saveAll(batch.getOffers());
         currentPriceRepository.saveAll(batch.getCurrentPrices());
         allPriceRepository.saveAll(batch.getPrices());
-    }
-
-    public String testProduct(String string)
-    {
-        List<String> list = getListOfProductsId(string);
-        String id = list.getFirst();
-        return getProductData(Regions.US.getRegionCode(), id).toString();
-    }
-
-    public List<String> testId(String string)
-    {
-        return getListOfProductsId(string);
+        log.info("Батч сохранен в БД");
     }
 
     public void bdSaveTest(String string)
     {
         List<String> list = getListOfProductsId(string);
-        String id = list.getFirst();
+        String id = list.get(9);
         PlayStationProductResponse productResponse = getProductData(Regions.US.getRegionCode(), id);
         String previewUrl = getProductPreviewUrl(Regions.US.getRegionCode(), id);
         ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl);

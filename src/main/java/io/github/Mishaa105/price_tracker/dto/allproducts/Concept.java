@@ -11,20 +11,24 @@ public record Concept(List<Product> products, String id)
 {
     public List<String> getId()
     {
-        if(products == null && id != null && !id.isEmpty())
+        if(products != null && !products.isEmpty())
         {
-            return Collections.singletonList(id);
-        }
-        else if(products != null && !products.isEmpty())
-        {
-            List<String> id = new ArrayList<>();
+            List<String> ids = new ArrayList<>();
 
             for (Product product : products)
             {
-                id.add(product.id());
+                if (product != null && product.id() != null)
+                {
+                    ids.add(product.id());
+                }
             }
-            return id;
+            return ids;
         }
-        return null;
+
+        if (id != null && !id.isEmpty())
+        {
+            return Collections.singletonList(id);
+        }
+        return Collections.emptyList();
     }
 }
