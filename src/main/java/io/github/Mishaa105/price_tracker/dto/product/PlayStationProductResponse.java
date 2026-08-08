@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record PlayStationProductResponse(Cache cache)
+public record PlayStationProductResponse(Args args, Cache cache)
 {
     public String getName()
     {
@@ -17,6 +17,11 @@ public record PlayStationProductResponse(Cache cache)
     public String getInvariantName()
     {
         return Optional.ofNullable(cache).map(Cache::gameName).map(GameName::invariantName).orElse(null);
+    }
+
+    public String getId()
+    {
+        return Optional.ofNullable(args).map(Args::productId).orElse(null);
     }
 
     public List<Local> getListOfAvailableLocals()

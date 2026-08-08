@@ -1,6 +1,7 @@
 package io.github.Mishaa105.price_tracker.service;
 
 import io.github.Mishaa105.price_tracker.batch.ProductBatch;
+import io.github.Mishaa105.price_tracker.constants.GraphQlCategoryGridConstants;
 import io.github.Mishaa105.price_tracker.db.entity.CurrentPrice;
 import io.github.Mishaa105.price_tracker.db.entity.Offer;
 import io.github.Mishaa105.price_tracker.db.entity.Price;
@@ -11,19 +12,28 @@ import io.github.Mishaa105.price_tracker.db.repository.PriceRepository;
 import io.github.Mishaa105.price_tracker.db.repository.ProductRepository;
 import io.github.Mishaa105.price_tracker.dto.allproducts.AllProducts;
 import io.github.Mishaa105.price_tracker.dto.allproducts.Concept;
+import io.github.Mishaa105.price_tracker.dto.graphql.*;
 import io.github.Mishaa105.price_tracker.dto.media.ProductMediaResponse;
 import io.github.Mishaa105.price_tracker.dto.product.Local;
 import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
 import io.github.Mishaa105.price_tracker.dto.product.SkuPriceDetail;
-import io.github.Mishaa105.price_tracker.enums.Regions;
+import io.github.Mishaa105.price_tracker.enums.graphql.Genre;
+import io.github.Mishaa105.price_tracker.enums.graphql.Platform;
+import io.github.Mishaa105.price_tracker.enums.graphql.ProductType;
+import io.github.Mishaa105.price_tracker.enums.graphql.SortByEnum;
+import io.github.Mishaa105.price_tracker.enums.regions.Regions;
 import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
+import io.github.Mishaa105.price_tracker.infrastructure.RestApiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -39,6 +49,7 @@ public class DataBaseUpdateService
     private final PriceRepository allPriceRepository;
     private final CurrentPriceRepository currentPriceRepository;
     private final OfferRepository offerRepository;
+    private final RestApiClient restApiClient;
 
     private List<String> getListOfProductsId(String rawJson)
     {
@@ -85,7 +96,7 @@ public class DataBaseUpdateService
             {
                 String name = productData.getName();
                 String invariantName = productData.getInvariantName();
-                String productId = local.ctaDataTrack().sku();
+                String productId = productData.args().productId();
                 int basePrice = price.originalPriceValue();
                 int discountPriceValue = price.discountPriceValue();
                 String offerBranding = price.offerBranding();
@@ -121,14 +132,47 @@ public class DataBaseUpdateService
         log.info("Батч сохранен в БД");
     }
 
-    public void bdSaveTest(String string)
+    private String buildGraphQlRequestUrl(ProductType productType, Platform platform, SortByEnum sortType, Genre genre,
+                                          int size, int offset)
     {
-        List<String> list = getListOfProductsId(string);
+        String baseUrl = GraphQlCategoryGridConstants.BASE_URL;
+        String operationName = GraphQlCategoryGridConstants.OPERATION_NAME;
+        int version = GraphQlCategoryGridConstants.VERSION;
+        String hash = GraphQlCategoryGridConstants.HASH;
+
+        PageArgs pageArgs = new PageArgs(size, offset);
+        SortBy sortBy = new SortBy(sortType.getSortType(), sortType.isAscending());
+        List<String> filterBy = List.of(genre.getGenre(), platform.getPlatform());
+        List<String> facetOptions = Collections.emptyList();
+
+        PersistedQuery persistedQuery = new PersistedQuery(version, hash);
+
+        Variables variables = new Variables(productType.getId(), pageArgs, sortBy, filterBy, facetOptions);
+        Extensions extensions = new Extensions(persistedQuery);
+
+        String variablesJson = mapper.writeValueAsString(variables);
+        String extensionsJson = mapper.writeValueAsString(extensions);
+
+        String encodedVariables =
+                URLEncoder.encode(variablesJson, StandardCharsets.UTF_8);
+
+        String encodedExtensions =
+                URLEncoder.encode(extensionsJson, StandardCharsets.UTF_8);
+        String url = baseUrl + "?operationName=" + operationName + "&variables=" + encodedVariables + "&extensions=" + encodedExtensions;
+        log.debug("GraphQL URL: {}", url);
+        return url;
+    }
+
+    public void bdSaveTest()
+    {
+        String url = buildGraphQlRequestUrl(ProductType.PS5, Platform.PS4, SortByEnum.NAME_A_Z, Genre.ADVENTURE, 1000, 300);
+        // NULL HANDLER
+        String rawJson = restApiClient.getData(url);
+        List<String> list = getListOfProductsId(rawJson);
         String id = list.get(9);
         PlayStationProductResponse productResponse = getProductData(Regions.US.getRegionCode(), id);
         String previewUrl = getProductPreviewUrl(Regions.US.getRegionCode(), id);
         ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl);
         saveBatchToDb(batch);
     }
-
 }
