@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.enums;
+package io.github.Mishaa105.price_tracker.enums.regions;
 
 import lombok.Getter;
 
