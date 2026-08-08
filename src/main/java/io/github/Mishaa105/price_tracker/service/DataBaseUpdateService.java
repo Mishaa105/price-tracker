@@ -84,13 +84,15 @@ public class DataBaseUpdateService
     {
         String jsonData = productMediaParser.extractJson(htmlDoc);
         ProductMediaResponse deserializedData = productMediaParser.deserialize(jsonData);
+        String previewUrl = deserializedData.getPreviewUrl();
         log.info("Превью получено");
-        return deserializedData.getPreviewUrl();
+        log.debug("URL превью: {}", previewUrl);
+        return previewUrl;
     }
 
     private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, String previewUrl)
     {
-        List<Local> localList = productData.getListOfAvailableLocals();
+        List<Local> localList = productData.getListOfAvailablePriceData();
         ProductBatch batch = new ProductBatch();
 
         for (Local local : localList)
@@ -173,7 +175,7 @@ public class DataBaseUpdateService
         String rawJson = restApiClient.getData(url);
         List<String> list = getListOfProductsId(rawJson);
         String id = list.get(9);
-        Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
+        Document htmlDoc = getHtmlDoc(Regions.UA.getRegionCode(), id);
         PlayStationProductResponse productResponse = getProductData(htmlDoc);
         String previewUrl = getProductPreviewUrl(htmlDoc);
         ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl);

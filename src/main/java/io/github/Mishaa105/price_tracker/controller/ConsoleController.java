@@ -1,9 +1,7 @@
 package io.github.Mishaa105.price_tracker.controller;
 
 import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
-import io.github.Mishaa105.price_tracker.dto.product.ExclusiveDiscountData;
 import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
-import io.github.Mishaa105.price_tracker.dto.product.SkuPriceDetail;
 import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
 import io.github.Mishaa105.price_tracker.dto.search.Product;
 import io.github.Mishaa105.price_tracker.service.ProductPageHtmlParser;
@@ -106,48 +104,15 @@ public class ConsoleController
                     System.out.println(name);
                     String data = "";
 
-                    if (!(responseProduct.cache().basePriceData().isEmpty()))
-                    {
-                        originalPrice = (double) responseProduct.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
-                        discountPrice = (double) responseProduct.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
-                        data = responseProduct.cache().basePrice().local().offerAvailability();
-                    }
-
-                    if (!(responseProduct.cache().preorderPriceData().isEmpty()))
-                    {
-                        originalPrice = (double) responseProduct.cache().preorderPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
-                        discountPrice = (double) responseProduct.cache().preorderPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
-                        data = responseProduct.cache().preorderPrice().local().offerAvailability();
-                    }
-
-                    if(!(responseProduct.cache().subscriptionPriceData().isEmpty()))
-                    {
-                        originalPrice = (double) responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
-                        discountPrice = (double) responseProduct.cache().subscriptionPrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
-                        data = responseProduct.cache().subscriptionPrice().local().offerAvailability();
-                    }
-
-                    if(!(responseProduct.cache().freeData().isEmpty()))
-                    {
-                        originalPrice = (double) responseProduct.cache().freePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
-                        discountPrice = (double) responseProduct.cache().freePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
-                        data = responseProduct.cache().freePrice().local().offerAvailability();
-                    }
+//                    if (!(responseProduct.cache().priceData().isEmpty()))
+//                    {
+//                        originalPrice = (double) responseProduct.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().originalPriceValue() / 100;
+//                        discountPrice = (double) responseProduct.cache().basePrice().local().telemetryMeta().skuDetail().skuPriceDetail().getFirst().discountPriceValue() / 100;
+//                        data = responseProduct.cache().basePrice().local().offerAvailability();
+//                    }
 
                     System.out.println("Обычная цена: " + originalPrice + "$");
                     System.out.println("Цена по скидке : " + discountPrice + "$");
-
-                    if (!(responseProduct.cache().exclusiveDiscountData().isEmpty()))
-                    {
-                        for (ExclusiveDiscountData discountData : responseProduct.cache().exclusiveDiscount())
-                        {
-                            List<SkuPriceDetail> skuPriceDetails = discountData.local().telemetryMeta().skuDetail().skuPriceDetail();
-                            double exclusivePrice = (double) skuPriceDetails.getFirst().discountPriceValue() / 100;
-                            String condition = skuPriceDetails.getFirst().offerBranding();
-
-                            System.out.println("Цена при наличии " + condition + " : " + exclusivePrice + "$");
-                        }
-                    }
 
                     System.out.println("Распродажа продлится до " + data);
 
@@ -170,4 +135,4 @@ public class ConsoleController
     }
 }
 
-// Если при поиске null (ps plus) то скрываем и идем дальше не передвигая индекс
+// Если при поиске null (ps plus), то скрываем и идем дальше не передвигая индекс
