@@ -68,17 +68,20 @@ public class DataBaseUpdateService
         return listOfId;
     }
 
-    private PlayStationProductResponse getProductData(String region, String id)
+    private Document getHtmlDoc(String region, String id)
     {
-        Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
+        return jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
+    }
+
+    private PlayStationProductResponse getProductData(Document htmlDoc)
+    {
         String jsonData = productPageParser.extractJson(htmlDoc);
         log.info("Данные о продукте получены");
         return productPageParser.deserialize(jsonData);
     }
 
-    private String getProductPreviewUrl(String region, String id)
+    private String getProductPreviewUrl(Document htmlDoc)
     {
-        Document htmlDoc = jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
         String jsonData = productMediaParser.extractJson(htmlDoc);
         ProductMediaResponse deserializedData = productMediaParser.deserialize(jsonData);
         log.info("Превью получено");
@@ -170,8 +173,9 @@ public class DataBaseUpdateService
         String rawJson = restApiClient.getData(url);
         List<String> list = getListOfProductsId(rawJson);
         String id = list.get(9);
-        PlayStationProductResponse productResponse = getProductData(Regions.US.getRegionCode(), id);
-        String previewUrl = getProductPreviewUrl(Regions.US.getRegionCode(), id);
+        Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
+        PlayStationProductResponse productResponse = getProductData(htmlDoc);
+        String previewUrl = getProductPreviewUrl(htmlDoc);
         ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl);
         saveBatchToDb(batch);
     }
