@@ -1,11 +1,8 @@
 package io.github.Mishaa105.price_tracker.dto.allproducts;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.Collections;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record CategoryGridRetrieve(List<Concept> concepts, List<Concept> products)
 {
     public List<Concept> getListOfProducts()

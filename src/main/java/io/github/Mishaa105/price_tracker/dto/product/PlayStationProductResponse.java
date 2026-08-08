@@ -1,12 +1,9 @@
 package io.github.Mishaa105.price_tracker.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record PlayStationProductResponse(Args args, Cache cache)
 {
     public String getName()
