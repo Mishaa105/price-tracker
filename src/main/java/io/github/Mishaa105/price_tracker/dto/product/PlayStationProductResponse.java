@@ -4,23 +4,29 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record PlayStationProductResponse(Cache cache)
 {
     public String getName()
     {
-        return cache.gameName().name();
+        return Optional.ofNullable(cache).map(Cache::gameName).map(GameName::name).orElse(null);
     }
 
     public String getInvariantName()
     {
-        return cache.gameName().invariantName();
+        return Optional.ofNullable(cache).map(Cache::gameName).map(GameName::invariantName).orElse(null);
     }
 
     public List<Local> getListOfAvailableLocals()
     {
         List<Local> locals = new ArrayList<>();
+
+        if (cache == null)
+        {
+            return locals;
+        }
 
         if (cache.basePrice() != null && cache.basePrice().local() != null)
         {

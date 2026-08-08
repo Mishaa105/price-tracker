@@ -7,6 +7,11 @@ public record ProductMediaResponse(Cache cache)
 {
     public String getPreviewUrl()
     {
-        return cache.mediaData().media().getLast().url();
+        if(cache != null && cache.mediaData() != null && cache.mediaData().media() != null && !cache.mediaData().media().isEmpty())
+        {
+            return cache.mediaData().media().getLast().url();
+        }
+
+        return null;
     }
 }
