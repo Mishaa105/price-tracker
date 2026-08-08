@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public record PlayStationProductResponse(Args args, Cache cache)
+public record PlayStationProductResponse(Args args, ProductCache cache)
 {
     public String getName()
     {
-        return Optional.ofNullable(cache).map(Cache::gameName).map(GameName::name).orElse(null);
+        return Optional.ofNullable(cache).map(ProductCache::gameName).map(GameName::name).orElse(null);
     }
 
     public String getInvariantName()
     {
-        return Optional.ofNullable(cache).map(Cache::gameName).map(GameName::invariantName).orElse(null);
+        return Optional.ofNullable(cache).map(ProductCache::gameName).map(GameName::invariantName).orElse(null);
     }
 
     public String getId()
