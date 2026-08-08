@@ -24,7 +24,7 @@ public record PlayStationProductResponse(Args args, Cache cache)
         return Optional.ofNullable(args).map(Args::productId).orElse(null);
     }
 
-    public List<Local> getListOfAvailableLocals()
+    public List<Local> getListOfAvailablePriceData()
     {
         List<Local> locals = new ArrayList<>();
 
@@ -33,37 +33,6 @@ public record PlayStationProductResponse(Args args, Cache cache)
             return locals;
         }
 
-        if (cache.basePrice() != null && cache.basePrice().local() != null)
-        {
-            locals.add(cache.basePrice().local());
-        }
-
-        if (cache.preorderPrice() != null && cache.preorderPrice().local() != null)
-        {
-            locals.add(cache.preorderPrice().local());
-        }
-
-        if (cache.freePrice() != null && cache.freePrice().local() != null)
-        {
-            locals.add(cache.freePrice().local());
-        }
-
-        if (cache.subscriptionPrice() != null && cache.subscriptionPrice().local() != null)
-        {
-            locals.add(cache.subscriptionPrice().local());
-        }
-
-        if (cache.exclusiveDiscountData() != null)
-        {
-            for (ExclusiveDiscountData data : cache.exclusiveDiscount())
-            {
-                if(data != null && data.local() != null)
-                {
-                    locals.add(data.local());
-                }
-            }
-        }
-
-        return locals;
+        return cache.basePrice().stream().map(PriceData::local).toList();
     }
 }
