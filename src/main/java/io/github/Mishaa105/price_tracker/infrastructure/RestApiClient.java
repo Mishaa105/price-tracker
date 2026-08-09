@@ -15,10 +15,11 @@ public class RestApiClient
         this.restClient = builder.build();
     }
 
-    public String getData(String url)
+    public String getData(String url, String locale)
     {
         return restClient.get()
                 .uri(URI.create(url))
+                .header("x-psn-store-locale-override", locale)
                 .retrieve()
                 .body(String.class);
     }

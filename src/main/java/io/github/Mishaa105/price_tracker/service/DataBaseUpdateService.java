@@ -170,12 +170,12 @@ public class DataBaseUpdateService
 
     public void bdSaveTest()
     {
-        String url = buildGraphQlRequestUrl(ProductType.PS5, Platform.PS4, SortByEnum.NAME_A_Z, Genre.ADVENTURE, 1000, 300);
+        String url = buildGraphQlRequestUrl(ProductType.PS5, Platform.PS4, SortByEnum.NAME_A_Z, Genre.ADVENTURE, 24, 288);
         // NULL HANDLER
-        String rawJson = restApiClient.getData(url);
+        String rawJson = restApiClient.getData(url, Regions.US.getLocaleHeaderCode());
         List<String> list = getListOfProductsId(rawJson);
-        String id = list.get(9);
-        Document htmlDoc = getHtmlDoc(Regions.UA.getRegionCode(), id);
+        String id = list.get(3);
+        Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
         PlayStationProductResponse productResponse = getProductData(htmlDoc);
         String previewUrl = getProductPreviewUrl(htmlDoc);
         ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl);
