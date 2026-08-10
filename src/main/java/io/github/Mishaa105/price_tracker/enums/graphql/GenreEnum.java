@@ -3,7 +3,7 @@ package io.github.Mishaa105.price_tracker.enums.graphql;
 import lombok.Getter;
 
 @Getter
-public enum Genre
+public enum GenreEnum
 {
     ACTION("productGenres:ACTION"),
     ADVENTURE("productGenres:ADVENTURE"),
@@ -32,7 +32,7 @@ public enum Genre
 
     private final String genre;
 
-    Genre(String genre)
+    GenreEnum(String genre)
     {
         this.genre = genre;
     }

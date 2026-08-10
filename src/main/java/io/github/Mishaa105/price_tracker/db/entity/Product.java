@@ -80,6 +80,14 @@ public class Product
     )
     private Set<Language> languages;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_genres",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres;
+
     @OneToMany(mappedBy = "product")
     private List<CurrentPrice> currentPrices;
 

@@ -21,4 +21,5 @@ public class ProductBatch
     private final List<Brand> brands = new ArrayList<>();
     private final List<Currency> currencies = new ArrayList<>();
     private final Set<Language> languages = new HashSet<>();
+    private final Set<Genre> genres = new HashSet<>();
 }

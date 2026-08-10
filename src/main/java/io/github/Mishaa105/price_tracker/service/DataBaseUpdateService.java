@@ -14,9 +14,9 @@ import io.github.Mishaa105.price_tracker.dto.media.ProductMediaResponse;
 import io.github.Mishaa105.price_tracker.dto.product.Local;
 import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
 import io.github.Mishaa105.price_tracker.dto.product.SkuPriceDetail;
-import io.github.Mishaa105.price_tracker.enums.graphql.Genre;
+import io.github.Mishaa105.price_tracker.enums.graphql.GenreEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.PlatformEnum;
-import io.github.Mishaa105.price_tracker.enums.graphql.ProductType;
+import io.github.Mishaa105.price_tracker.enums.graphql.ProductTypeEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.SortByEnum;
 import io.github.Mishaa105.price_tracker.enums.regions.Regions;
 import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
@@ -53,6 +53,7 @@ public class DataBaseUpdateService
     private final BrandRepository brandRepository;
     private final CurrencyRepository currencyRepository;
     private final LanguageRepository languageRepository;
+    private final GenreRepository genreRepository;
     private final RestApiClient restApiClient;
 
     private List<String> getListOfProductsId(String rawJson)
@@ -84,14 +85,11 @@ public class DataBaseUpdateService
         return productPageParser.deserialize(jsonData);
     }
 
-    private String getProductPreviewUrl(Document htmlDoc)
+    private ProductMediaResponse getProductMediaData(Document htmlDoc)
     {
         String jsonData = productMediaParser.extractJson(htmlDoc);
-        ProductMediaResponse deserializedData = productMediaParser.deserialize(jsonData);
-        String previewUrl = deserializedData.getPreviewUrl();
-        log.info("Превью получено");
-        log.debug("URL превью: {}", previewUrl);
-        return previewUrl;
+        log.info("Данные о медиа и жанрах получены");
+        return productMediaParser.deserialize(jsonData);
     }
 
     private ProductMetadataResponse getProductMetadata(Document htmlDoc)
@@ -108,7 +106,7 @@ public class DataBaseUpdateService
         return languagesParser.deserialize(jsonData);
     }
 
-    private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, String previewUrl,
+    private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, ProductMediaResponse mediaResponse,
                                                ProductMetadataResponse productMetadata,
                                                LanguageDataResponse languageData)
     {
@@ -134,11 +132,14 @@ public class DataBaseUpdateService
                 String publisherName = productMetadata.getPublisherName();
                 Double averageRating = productMetadata.getAverageRating();
                 Integer ratingsCount = productMetadata.getTotalRatingsCount();
+                String previewUrl = mediaResponse.getPreviewUrl();
+                Set<String> genreNames = mediaResponse.getGenres();
 
                 Product product = new Product(productId, name, invariantName, previewUrl, description, edition, releaseDate, averageRating, ratingsCount);
                 Offer offer = new Offer(null, null, offerAvailability);
                 Set<Platform> platforms = productMetadata.getPlatforms().stream().map(Platform::new).collect(Collectors.toSet());
                 Set<Language> languages = new HashSet<>();
+
                 for (Platform platform : platforms)
                 {
                    Set<String> spokenLanguages = languageData.getSpokenLanguagesByPlatform(platform);
@@ -165,6 +166,9 @@ public class DataBaseUpdateService
                     }
 
                 }
+
+                Set<Genre> genres = genreNames.stream().map(Genre::new).collect(Collectors.toSet());
+
                 CurrentPrice currentPrice = new CurrentPrice(basePrice, discountPriceValue);
                 Price allPrices = new Price(basePrice, discountPriceValue);
                 Publisher publisher = new Publisher(publisherName);
@@ -184,12 +188,14 @@ public class DataBaseUpdateService
                 product.setStoreClassification(storeClassification);
                 product.setPlatforms(platforms);
                 product.setLanguages(languages);
+                product.setGenres(genres);
 
                 batch.getProducts().add(product);
                 batch.getOffers().add(offer);
                 batch.getCurrentPrices().add(currentPrice);
                 batch.getPrices().add(allPrices);
                 batch.getPlatforms().addAll(platforms);
+                batch.getGenres().addAll(genres);
                 batch.getPublishers().add(publisher);
                 batch.getStoreClassifications().add(storeClassification);
                 batch.getCurrencies().add(currencies);
@@ -206,6 +212,7 @@ public class DataBaseUpdateService
         publisherRepository.saveAll(batch.getPublishers());
         platformRepository.saveAll(batch.getPlatforms());
         languageRepository.saveAll(batch.getLanguages());
+        genreRepository.saveAll(batch.getGenres());
         productRepository.saveAll(batch.getProducts());
         brandRepository.saveAll(batch.getBrands());
         currencyRepository.saveAll(batch.getCurrencies());
@@ -215,8 +222,8 @@ public class DataBaseUpdateService
         log.info("Батч сохранен в БД");
     }
 
-    private String buildGraphQlRequestUrl(ProductType productType, PlatformEnum platform, SortByEnum sortType,
-                                          Genre genre, int size, int offset)
+    private String buildGraphQlRequestUrl(ProductTypeEnum productType, PlatformEnum platform, SortByEnum sortType,
+                                          GenreEnum genre, int size, int offset)
     {
         String baseUrl = GraphQlCategoryGridConstants.BASE_URL;
         String operationName = GraphQlCategoryGridConstants.OPERATION_NAME;
@@ -248,7 +255,7 @@ public class DataBaseUpdateService
 
     public void bdSaveTest()
     {
-        String url = buildGraphQlRequestUrl(ProductType.PS5, PlatformEnum.PS4, SortByEnum.NAME_A_Z, Genre.ADVENTURE, 24, 288);
+        String url = buildGraphQlRequestUrl(ProductTypeEnum.PS5, PlatformEnum.PS5, SortByEnum.BESTSELLING, GenreEnum.ADVENTURE, 24, 288);
         // NULL HANDLER
         String rawJson = restApiClient.getData(url, Regions.US.getLocaleHeaderCode());
         List<String> list = getListOfProductsId(rawJson);
@@ -257,8 +264,8 @@ public class DataBaseUpdateService
         PlayStationProductResponse productResponse = getProductData(htmlDoc);
         ProductMetadataResponse metadataResponse = getProductMetadata(htmlDoc);
         LanguageDataResponse languageDataResponse = getProductLanguagesData(htmlDoc);
-        String previewUrl = getProductPreviewUrl(htmlDoc);
-        ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl, metadataResponse, languageDataResponse);
+        ProductMediaResponse mediaResponse = getProductMediaData(htmlDoc);
+        ProductBatch batch = buildDatabaseEntities(productResponse, mediaResponse, metadataResponse, languageDataResponse);
         saveBatchToDb(batch);
     }
 }

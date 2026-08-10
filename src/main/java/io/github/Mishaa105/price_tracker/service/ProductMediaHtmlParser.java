@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductMediaHtmlParser extends HtmlPayloadHtmlParser<ProductMediaResponse>
 {
-    private static final String SCRIPT = "script[id^=env:]:containsData(\"MASTER\")";
+    private static final String SCRIPT = "script[id^=env:]:containsData(\"MASTER\"):containsData(\"localizedGenres\")";
 
     @Override
     protected String getScript()
