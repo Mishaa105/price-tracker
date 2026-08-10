@@ -72,6 +72,14 @@ public class Product
     )
     private Set<Platform> platforms;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_languages",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private Set<Language> languages;
+
     @OneToMany(mappedBy = "product")
     private List<CurrentPrice> currentPrices;
 

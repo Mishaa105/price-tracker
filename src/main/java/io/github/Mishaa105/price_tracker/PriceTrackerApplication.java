@@ -27,5 +27,6 @@ public class PriceTrackerApplication
 //            controller.start();
         };
         //Unavailable (gta 6 edition updater)
+        //Большой скрипт и универсальный cache
     }
 }

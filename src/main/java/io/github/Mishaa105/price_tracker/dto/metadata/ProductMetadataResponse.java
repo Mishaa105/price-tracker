@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.dto.description;
+package io.github.Mishaa105.price_tracker.dto.metadata;
 
 import java.util.Optional;
 import java.util.Set;

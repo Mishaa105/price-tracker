@@ -1,6 +1,6 @@
 package io.github.Mishaa105.price_tracker.service;
 
-import io.github.Mishaa105.price_tracker.dto.description.ProductMetadataResponse;
+import io.github.Mishaa105.price_tracker.dto.metadata.ProductMetadataResponse;
 import org.springframework.stereotype.Service;
 
 @Service

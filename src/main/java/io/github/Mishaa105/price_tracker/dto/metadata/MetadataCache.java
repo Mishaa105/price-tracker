@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.dto.description;
+package io.github.Mishaa105.price_tracker.dto.metadata;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import tools.jackson.databind.JsonNode;
