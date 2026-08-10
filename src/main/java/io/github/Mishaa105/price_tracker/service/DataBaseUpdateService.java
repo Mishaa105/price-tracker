@@ -7,7 +7,8 @@ import io.github.Mishaa105.price_tracker.db.entity.Currency;
 import io.github.Mishaa105.price_tracker.db.repository.*;
 import io.github.Mishaa105.price_tracker.dto.allproducts.AllProducts;
 import io.github.Mishaa105.price_tracker.dto.allproducts.Concept;
-import io.github.Mishaa105.price_tracker.dto.language.LanguageDataResponse;
+import io.github.Mishaa105.price_tracker.dto.genre.ProductGenresResponse;
+import io.github.Mishaa105.price_tracker.dto.language.LanguagesDataResponse;
 import io.github.Mishaa105.price_tracker.dto.metadata.ProductMetadataResponse;
 import io.github.Mishaa105.price_tracker.dto.graphql.*;
 import io.github.Mishaa105.price_tracker.dto.media.ProductMediaResponse;
@@ -43,6 +44,7 @@ public class DataBaseUpdateService
     private final ProductMediaHtmlParser productMediaParser;
     private final ProductMetadataHtmlParser productMetadataParser;
     private final ProductLanguagesHtmlParser languagesParser;
+    private final ProductGenresHtmlParser genresParser;
     private final ProductRepository productRepository;
     private final PriceRepository allPriceRepository;
     private final CurrentPriceRepository currentPriceRepository;
@@ -99,16 +101,23 @@ public class DataBaseUpdateService
         return productMetadataParser.deserialize(jsonData);
     }
 
-    private LanguageDataResponse getProductLanguagesData(Document htmlDoc)
+    private LanguagesDataResponse getProductLanguagesData(Document htmlDoc)
     {
         String jsonData = languagesParser.extractJson(htmlDoc);
         log.info("Данные о локализации получены");
         return languagesParser.deserialize(jsonData);
     }
 
+    private ProductGenresResponse getProductGenresData(Document htmlDoc)
+    {
+        String jsonData = genresParser.extractJson(htmlDoc);
+        log.info("Данные о жанрах получены");
+        return genresParser.deserialize(jsonData);
+    }
+
     private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, ProductMediaResponse mediaResponse,
-                                               ProductMetadataResponse productMetadata,
-                                               LanguageDataResponse languageData)
+                                               ProductMetadataResponse productMetadata, LanguagesDataResponse languageData,
+                                               ProductGenresResponse genresResponse)
     {
         List<Local> localList = productData.getListOfAvailablePriceData();
         ProductBatch batch = new ProductBatch();
@@ -133,7 +142,7 @@ public class DataBaseUpdateService
                 Double averageRating = productMetadata.getAverageRating();
                 Integer ratingsCount = productMetadata.getTotalRatingsCount();
                 String previewUrl = mediaResponse.getPreviewUrl();
-                Set<String> genreNames = mediaResponse.getGenres();
+                Set<String> genreNames = genresResponse.getGenres();
 
                 Product product = new Product(productId, name, invariantName, previewUrl, description, edition, releaseDate, averageRating, ratingsCount);
                 Offer offer = new Offer(null, null, offerAvailability);
@@ -255,17 +264,21 @@ public class DataBaseUpdateService
 
     public void bdSaveTest()
     {
-        String url = buildGraphQlRequestUrl(ProductTypeEnum.PS5, PlatformEnum.PS5, SortByEnum.BESTSELLING, GenreEnum.ADVENTURE, 24, 288);
-        // NULL HANDLER
-        String rawJson = restApiClient.getData(url, Regions.US.getLocaleHeaderCode());
-        List<String> list = getListOfProductsId(rawJson);
-        String id = list.get(3);
-        Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
-        PlayStationProductResponse productResponse = getProductData(htmlDoc);
-        ProductMetadataResponse metadataResponse = getProductMetadata(htmlDoc);
-        LanguageDataResponse languageDataResponse = getProductLanguagesData(htmlDoc);
-        ProductMediaResponse mediaResponse = getProductMediaData(htmlDoc);
-        ProductBatch batch = buildDatabaseEntities(productResponse, mediaResponse, metadataResponse, languageDataResponse);
-        saveBatchToDb(batch);
+        for (int i = 0; i <50; i++)
+        {
+            String url = buildGraphQlRequestUrl(ProductTypeEnum.PS5, PlatformEnum.PS5, SortByEnum.BESTSELLING, GenreEnum.ADVENTURE, 51, i);
+            // NULL HANDLER
+            String rawJson = restApiClient.getData(url, Regions.US.getLocaleHeaderCode());
+            List<String> list = getListOfProductsId(rawJson);
+            String id = list.get(3);
+            Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
+            PlayStationProductResponse productResponse = getProductData(htmlDoc);
+            ProductMetadataResponse metadataResponse = getProductMetadata(htmlDoc);
+            LanguagesDataResponse languagesDataResponse = getProductLanguagesData(htmlDoc);
+            ProductMediaResponse mediaResponse = getProductMediaData(htmlDoc);
+            ProductGenresResponse genresResponse = getProductGenresData(htmlDoc);
+            ProductBatch batch = buildDatabaseEntities(productResponse, mediaResponse, metadataResponse, languagesDataResponse, genresResponse);
+            saveBatchToDb(batch);
+        }
     }
 }
