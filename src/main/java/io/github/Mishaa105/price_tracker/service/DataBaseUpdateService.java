@@ -3,10 +3,12 @@ package io.github.Mishaa105.price_tracker.service;
 import io.github.Mishaa105.price_tracker.batch.ProductBatch;
 import io.github.Mishaa105.price_tracker.constants.GraphQlCategoryGridConstants;
 import io.github.Mishaa105.price_tracker.db.entity.*;
+import io.github.Mishaa105.price_tracker.db.entity.Currency;
 import io.github.Mishaa105.price_tracker.db.repository.*;
 import io.github.Mishaa105.price_tracker.dto.allproducts.AllProducts;
 import io.github.Mishaa105.price_tracker.dto.allproducts.Concept;
-import io.github.Mishaa105.price_tracker.dto.description.ProductMetadataResponse;
+import io.github.Mishaa105.price_tracker.dto.language.LanguageDataResponse;
+import io.github.Mishaa105.price_tracker.dto.metadata.ProductMetadataResponse;
 import io.github.Mishaa105.price_tracker.dto.graphql.*;
 import io.github.Mishaa105.price_tracker.dto.media.ProductMediaResponse;
 import io.github.Mishaa105.price_tracker.dto.product.Local;
@@ -27,10 +29,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +42,7 @@ public class DataBaseUpdateService
     private final ProductPageHtmlParser productPageParser;
     private final ProductMediaHtmlParser productMediaParser;
     private final ProductMetadataHtmlParser productMetadataParser;
+    private final ProductLanguagesHtmlParser languagesParser;
     private final ProductRepository productRepository;
     private final PriceRepository allPriceRepository;
     private final CurrentPriceRepository currentPriceRepository;
@@ -52,6 +52,7 @@ public class DataBaseUpdateService
     private final PublisherRepository publisherRepository;
     private final BrandRepository brandRepository;
     private final CurrencyRepository currencyRepository;
+    private final LanguageRepository languageRepository;
     private final RestApiClient restApiClient;
 
     private List<String> getListOfProductsId(String rawJson)
@@ -100,8 +101,16 @@ public class DataBaseUpdateService
         return productMetadataParser.deserialize(jsonData);
     }
 
+    private LanguageDataResponse getProductLanguagesData(Document htmlDoc)
+    {
+        String jsonData = languagesParser.extractJson(htmlDoc);
+        log.info("Данные о локализации получены");
+        return languagesParser.deserialize(jsonData);
+    }
+
     private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, String previewUrl,
-                                               ProductMetadataResponse productMetadata)
+                                               ProductMetadataResponse productMetadata,
+                                               LanguageDataResponse languageData)
     {
         List<Local> localList = productData.getListOfAvailablePriceData();
         ProductBatch batch = new ProductBatch();
@@ -129,6 +138,33 @@ public class DataBaseUpdateService
                 Product product = new Product(productId, name, invariantName, previewUrl, description, edition, releaseDate, averageRating, ratingsCount);
                 Offer offer = new Offer(null, null, offerAvailability);
                 Set<Platform> platforms = productMetadata.getPlatforms().stream().map(Platform::new).collect(Collectors.toSet());
+                Set<Language> languages = new HashSet<>();
+                for (Platform platform : platforms)
+                {
+                   Set<String> spokenLanguages = languageData.getSpokenLanguagesByPlatform(platform);
+                   Set<String> screenLanguages = languageData.getScreenLanguagesByPlatform(platform);
+
+                   if(spokenLanguages != null)
+                   {
+                       for (String lang : spokenLanguages)
+                       {
+                           Language language = new Language(lang, "SPOKEN");
+                           languages.add(language);
+                           batch.getLanguages().add(language);
+                       }
+                   }
+
+                    if(screenLanguages != null)
+                    {
+                        for (String lang : screenLanguages)
+                        {
+                            Language language = new Language(lang, "SCREEN");
+                            languages.add(language);
+                            batch.getLanguages().add(language);
+                        }
+                    }
+
+                }
                 CurrentPrice currentPrice = new CurrentPrice(basePrice, discountPriceValue);
                 Price allPrices = new Price(basePrice, discountPriceValue);
                 Publisher publisher = new Publisher(publisherName);
@@ -147,6 +183,7 @@ public class DataBaseUpdateService
                 product.setPublisherName(publisher);
                 product.setStoreClassification(storeClassification);
                 product.setPlatforms(platforms);
+                product.setLanguages(languages);
 
                 batch.getProducts().add(product);
                 batch.getOffers().add(offer);
@@ -168,6 +205,7 @@ public class DataBaseUpdateService
         storeClassificationRepository.saveAll(batch.getStoreClassifications());
         publisherRepository.saveAll(batch.getPublishers());
         platformRepository.saveAll(batch.getPlatforms());
+        languageRepository.saveAll(batch.getLanguages());
         productRepository.saveAll(batch.getProducts());
         brandRepository.saveAll(batch.getBrands());
         currencyRepository.saveAll(batch.getCurrencies());
@@ -218,8 +256,9 @@ public class DataBaseUpdateService
         Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
         PlayStationProductResponse productResponse = getProductData(htmlDoc);
         ProductMetadataResponse metadataResponse = getProductMetadata(htmlDoc);
+        LanguageDataResponse languageDataResponse = getProductLanguagesData(htmlDoc);
         String previewUrl = getProductPreviewUrl(htmlDoc);
-        ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl, metadataResponse);
+        ProductBatch batch = buildDatabaseEntities(productResponse, previewUrl, metadataResponse, languageDataResponse);
         saveBatchToDb(batch);
     }
 }
