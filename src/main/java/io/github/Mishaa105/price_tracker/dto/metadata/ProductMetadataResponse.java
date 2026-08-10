@@ -1,5 +1,6 @@
 package io.github.Mishaa105.price_tracker.dto.metadata;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ public record ProductMetadataResponse(MetadataCache cache)
 
     public Set<String> getPlatforms()
     {
-        return Optional.ofNullable(cache).map(MetadataCache::metadata).map(Metadata::platforms).orElse(null);
+        return Optional.ofNullable(cache).map(MetadataCache::metadata).map(Metadata::platforms)
+                .orElse(Collections.emptySet());
     }
 
     public String getStoreDisplayClassification()

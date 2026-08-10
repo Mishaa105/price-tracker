@@ -3,7 +3,7 @@ package io.github.Mishaa105.price_tracker.enums.graphql;
 import lombok.Getter;
 
 @Getter
-public enum ProductType
+public enum ProductTypeEnum
 {
     PS5("d0446d4b-dc9a-4f1e-86ec-651f099c9b29"),
     PS4("30e3fe35-8f2d-4496-95bc-844f56952e3c"),
@@ -12,7 +12,7 @@ public enum ProductType
 
     private final String id;
 
-    ProductType(String id)
+    ProductTypeEnum(String id)
     {
         this.id = id;
     }
