@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Price
 {
-    public Price(Integer originalPrice, Integer discountPrise)
+    public Price(Integer originalPrice, Integer discountPrice)
     {
         this.originalPrice = originalPrice;
-        this.discountPrise = discountPrise;
+        this.discountPrice = discountPrice;
     }
 
     @Id
@@ -29,7 +29,7 @@ public class Price
     private Integer originalPrice;
 
     @Column
-    private Integer discountPrise;
+    private Integer discountPrice;
 
     @ManyToOne
     @JoinColumn(name = "branding_id")

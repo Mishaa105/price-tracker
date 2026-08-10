@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-public record LanguageDataResponse(LanguageCache cache)
+public record LanguagesDataResponse(LanguageCache cache)
 {
     public Set<String> getSpokenLanguagesByPlatform(Platform platform)
     {

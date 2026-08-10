@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CurrentPrice
 {
-    public CurrentPrice(Integer originalPrice, Integer discountPrise)
+    public CurrentPrice(Integer originalPrice, Integer discountPrice)
     {
         this.originalPrice = originalPrice;
-        this.discountPrise = discountPrise;
+        this.discountPrice = discountPrice;
     }
 
     @Id
@@ -26,7 +26,7 @@ public class CurrentPrice
     private Integer originalPrice;
 
     @Column
-    private Integer discountPrise;
+    private Integer discountPrice;
 
     @ManyToOne
     @JoinColumn(name = "branding_id")
