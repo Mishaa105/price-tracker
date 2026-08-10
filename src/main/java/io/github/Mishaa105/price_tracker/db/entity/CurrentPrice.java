@@ -12,12 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CurrentPrice
 {
-    public CurrentPrice(Integer originalPrice, Integer discountPrise, String offerBranding, String priceCurrencyCode)
+    public CurrentPrice(Integer originalPrice, Integer discountPrise)
     {
         this.originalPrice = originalPrice;
         this.discountPrise = discountPrise;
-        this.offerBranding = offerBranding;
-        this.priceCurrencyCode = priceCurrencyCode;
     }
 
     @Id
@@ -30,11 +28,13 @@ public class CurrentPrice
     @Column
     private Integer discountPrise;
 
-    @Column
-    private String offerBranding;
+    @ManyToOne
+    @JoinColumn(name = "branding_id")
+    private Brand offerBrand;
 
-    @Column
-    private String priceCurrencyCode;
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    private Currency priceCurrencyCode;
 
     @ManyToOne
     @JoinColumn(name = "offer_id")

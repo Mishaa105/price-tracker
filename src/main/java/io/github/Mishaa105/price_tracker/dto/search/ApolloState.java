@@ -3,13 +3,12 @@ package io.github.Mishaa105.price_tracker.dto.search;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public record ApolloState(@JsonDeserialize(as = LinkedHashMap.class) Map<String, Product> products)
+public record ApolloState(Map<String, Product> products)
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 
