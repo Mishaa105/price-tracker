@@ -1,10 +1,10 @@
 package io.github.Mishaa105.price_tracker.service;
 
-import io.github.Mishaa105.price_tracker.dto.language.LanguageDataResponse;
+import io.github.Mishaa105.price_tracker.dto.language.LanguagesDataResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductLanguagesHtmlParser extends HtmlPayloadHtmlParser<LanguageDataResponse>
+public class ProductLanguagesHtmlParser extends HtmlPayloadHtmlParser<LanguagesDataResponse>
 {
     private static final String SCRIPT = "script[id^=env:]:containsData(\"spokenLanguagesByPlatform\")";
 
@@ -15,8 +15,8 @@ public class ProductLanguagesHtmlParser extends HtmlPayloadHtmlParser<LanguageDa
     }
 
     @Override
-    protected Class<LanguageDataResponse> getTargetClass()
+    protected Class<LanguagesDataResponse> getTargetClass()
     {
-        return LanguageDataResponse.class;
+        return LanguagesDataResponse.class;
     }
 }
