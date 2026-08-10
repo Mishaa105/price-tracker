@@ -1,6 +1,6 @@
 package io.github.Mishaa105.price_tracker.dto.media;
 
-public record ProductMediaResponse(Cache cache)
+public record ProductMediaResponse(MediaCache cache)
 {
     public String getPreviewUrl()
     {

@@ -8,17 +8,15 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "offers")
+@Table(name = "brands")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Offer
+public class Brand
 {
-    public Offer(String offerName, String startDate, String endDate)
+    public Brand(String brand)
     {
-        this.offerName = offerName;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.brand = brand;
     }
 
     @Id
@@ -26,17 +24,11 @@ public class Offer
     private Integer id;
 
     @Column
-    private String offerName;
+    private String brand;
 
-    @Column
-    private String startDate;
-
-    @Column
-    private String endDate; //offerAvailability
-
-    @OneToMany(mappedBy = "offer")
+    @OneToMany(mappedBy = "offerBrand")
     private List<CurrentPrice> currentPrices;
 
-    @OneToMany(mappedBy = "offer")
+    @OneToMany(mappedBy = "offerBrand")
     private List<Price> allPrices;
 }

@@ -3,12 +3,10 @@ package io.github.Mishaa105.price_tracker.dto.product;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.*;
 
-public record ProductCache(@JsonDeserialize(as = LinkedHashMap.class) Map<String, GameName> nameDataMap,
-                           @JsonDeserialize(as = LinkedHashMap.class) Map<String, PriceData> priceDataMap)
+public record ProductCache(Map<String, GameName> nameDataMap, Map<String, PriceData> priceDataMap)
 {
     private static final ObjectMapper mapper = new ObjectMapper();
 

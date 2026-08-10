@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -14,12 +15,18 @@ import java.util.List;
 @NoArgsConstructor
 public class Product
 {
-    public Product(String productId, String name, String invariantName, String previewUrl)
+    public Product(String productId, String name, String invariantName, String previewUrl,
+                   String description, String edition, String releaseDate, Double averageRating, Integer ratingsCount)
     {
         this.productId = productId;
         this.name = name;
         this.invariantName = invariantName;
         this.previewUrl = previewUrl;
+        this.description = description;
+        this.edition = edition;
+        this.releaseDate = releaseDate;
+        this.averageRating = averageRating;
+        this.ratingsCount = ratingsCount;
     }
 
     @Id
@@ -33,6 +40,37 @@ public class Product
 
     @Column
     private String previewUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column
+    private String edition;
+
+    @Column
+    private String releaseDate;
+
+    @Column
+    private Double averageRating;
+
+    @Column
+    private Integer ratingsCount;
+
+    @ManyToOne
+    @JoinColumn(name = "store_classification_id")
+    private StoreClassification storeClassification;
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_name_id")
+    private Publisher publisherName;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_platforms",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "platform_id")
+    )
+    private Set<Platform> platforms;
 
     @OneToMany(mappedBy = "product")
     private List<CurrentPrice> currentPrices;
