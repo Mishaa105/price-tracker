@@ -12,7 +12,8 @@ import io.github.Mishaa105.price_tracker.dto.language.LanguagesDataResponse;
 import io.github.Mishaa105.price_tracker.dto.metadata.ProductMetadataResponse;
 import io.github.Mishaa105.price_tracker.dto.graphql.*;
 import io.github.Mishaa105.price_tracker.dto.media.ProductMediaResponse;
-import io.github.Mishaa105.price_tracker.dto.product.*;
+import io.github.Mishaa105.price_tracker.dto.main.*;
+import io.github.Mishaa105.price_tracker.dto.main.Price;
 import io.github.Mishaa105.price_tracker.enums.graphql.GenreEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.PlatformEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.ProductTypeEnum;
@@ -38,7 +39,7 @@ public class DataBaseUpdateService
 {
     private final ObjectMapper mapper;
     private final JsoupClient jsoupClient;
-    private final ProductPageHtmlParser productPageParser;
+    private final ProductMainHtmlParser productMainParser;
     private final ProductMediaHtmlParser productMediaParser;
     private final ProductMetadataHtmlParser productMetadataParser;
     private final ProductLanguagesHtmlParser languagesParser;
@@ -78,11 +79,11 @@ public class DataBaseUpdateService
         return jsoupClient.loadHtmlPage(region, JsoupClient.RequestType.PRODUCT, id);
     }
 
-    private PlayStationProductResponse getProductData(Document htmlDoc)
+    private ProductMainResponse getProductMainData(Document htmlDoc)
     {
-        String jsonData = productPageParser.extractJson(htmlDoc);
+        String jsonData = productMainParser.extractJson(htmlDoc);
         log.info("Данные о продукте получены");
-        return productPageParser.deserialize(jsonData);
+        return productMainParser.deserialize(jsonData);
     }
 
     private ProductMediaResponse getProductMediaData(Document htmlDoc)
@@ -113,25 +114,23 @@ public class DataBaseUpdateService
         return genresParser.deserialize(jsonData);
     }
 
-    private ProductBatch buildDatabaseEntities(PlayStationProductResponse productData, ProductMediaResponse mediaResponse,
+    private ProductBatch buildDatabaseEntities(ProductMainResponse productMainData, ProductMediaResponse mediaResponse,
                                                ProductMetadataResponse productMetadata, LanguagesDataResponse languageData,
                                                ProductGenresResponse genresResponse)
     {
-        List<Local> localList = productData.getListOfAvailablePriceData();
+        List<Price> priceList = productMainData.getListOfAvailablePriceData();
         ProductBatch batch = new ProductBatch();
 
-        for (Local local : localList)
+        for (Price price : priceList)
         {
-            for(SkuPriceDetail price : local.telemetryMeta().skuDetail().skuPriceDetail())
-            {
-                String name = productData.getName();
-                String invariantName = productData.getInvariantName();
-                String productId = productData.args().productId();
-                Integer basePrice = price.originalPriceValue();
-                Integer discountPriceValue = price.discountPriceValue();
-                String offerBranding = price.offerBranding();
-                String offerAvailability = local.offerAvailability();
-                String priceCurrencyCode = price.priceCurrencyCode();
+                String name = productMainData.getName();
+                String invariantName = productMainData.getInvariantName();
+                String productId = productMainData.args().productId();
+                Integer basePrice = price.basePriceValue();
+                Integer discountPriceValue = price.discountedValue();
+                String offerBranding = price.membershipType();
+                String offerAvailability = price.endTime();
+                String priceCurrencyCode = price.currencyCode();
                 String description = productMetadata.getLongDescription();
                 String edition = productMetadata.getEdition();
                 String productType = productMetadata.getStoreDisplayClassification();
@@ -177,7 +176,7 @@ public class DataBaseUpdateService
                 Set<Genre> genres = genreNames.stream().map(Genre::new).collect(Collectors.toSet());
 
                 CurrentPrice currentPrice = new CurrentPrice(basePrice, discountPriceValue);
-                Price allPrices = new Price(basePrice, discountPriceValue);
+                io.github.Mishaa105.price_tracker.db.entity.Price allPrices = new io.github.Mishaa105.price_tracker.db.entity.Price(basePrice, discountPriceValue);
                 Publisher publisher = new Publisher(publisherName);
                 StoreClassification storeClassification = new StoreClassification(productType);
                 Brand brands = new Brand(offerBranding);
@@ -207,7 +206,6 @@ public class DataBaseUpdateService
                 batch.getStoreClassifications().add(storeClassification);
                 batch.getCurrencies().add(currencies);
                 batch.getBrands().add(brands);
-            }
         }
         log.info("Батч сформирован");
         return batch;
@@ -262,7 +260,7 @@ public class DataBaseUpdateService
 
     public void bdSaveTest()
     {
-        for (int i = 47; i <50; i++)
+        for (int i = 5; i <50; i++)
         {
             String url = buildGraphQlRequestUrl(ProductTypeEnum.PS5, PlatformEnum.PS5, SortByEnum.BESTSELLING, GenreEnum.ADVENTURE, 51, i);
             // NULL HANDLER
@@ -270,12 +268,12 @@ public class DataBaseUpdateService
             List<String> list = getListOfProductsId(rawJson);
             String id = list.get(3);
             Document htmlDoc = getHtmlDoc(Regions.US.getRegionCode(), id);
-            PlayStationProductResponse productResponse = getProductData(htmlDoc);
+            ProductMainResponse productMainResponse = getProductMainData(htmlDoc);
             ProductMetadataResponse metadataResponse = getProductMetadata(htmlDoc);
             LanguagesDataResponse languagesDataResponse = getProductLanguagesData(htmlDoc);
             ProductMediaResponse mediaResponse = getProductMediaData(htmlDoc);
             ProductGenresResponse genresResponse = getProductGenresData(htmlDoc);
-            ProductBatch batch = buildDatabaseEntities(productResponse, mediaResponse, metadataResponse, languagesDataResponse, genresResponse);
+            ProductBatch batch = buildDatabaseEntities(productMainResponse, mediaResponse, metadataResponse, languagesDataResponse, genresResponse);
             saveBatchToDb(batch);
         }
     }

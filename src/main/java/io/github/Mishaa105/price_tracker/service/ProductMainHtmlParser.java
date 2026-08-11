@@ -1,10 +1,10 @@
 package io.github.Mishaa105.price_tracker.service;
 
-import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
+import io.github.Mishaa105.price_tracker.dto.main.ProductMainResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductPageHtmlParser extends HtmlPayloadHtmlParser<PlayStationProductResponse>
+public class ProductMainHtmlParser extends HtmlPayloadHtmlParser<ProductMainResponse>
 {
     private static final String SCRIPT = "script[id^=env:]:containsData(\"originalPriceFormatted\")";
 
@@ -15,8 +15,8 @@ public class ProductPageHtmlParser extends HtmlPayloadHtmlParser<PlayStationProd
     }
 
     @Override
-    protected Class<PlayStationProductResponse> getTargetClass()
+    protected Class<ProductMainResponse> getTargetClass()
     {
-        return PlayStationProductResponse.class;
+        return ProductMainResponse.class;
     }
 }

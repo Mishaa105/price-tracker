@@ -1,10 +1,10 @@
 package io.github.Mishaa105.price_tracker.controller;
 
 import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
-import io.github.Mishaa105.price_tracker.dto.product.PlayStationProductResponse;
+import io.github.Mishaa105.price_tracker.dto.main.ProductMainResponse;
 import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
 import io.github.Mishaa105.price_tracker.dto.search.Product;
-import io.github.Mishaa105.price_tracker.service.ProductPageHtmlParser;
+import io.github.Mishaa105.price_tracker.service.ProductMainHtmlParser;
 import io.github.Mishaa105.price_tracker.service.SearchPageHtmlParser;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
@@ -25,7 +25,7 @@ public class ConsoleController
 
     private final JsoupClient jsoupClient;
     private final SearchPageHtmlParser searchPageParser;
-    private final ProductPageHtmlParser productPageParser;
+    private final ProductMainHtmlParser productPageParser;
 
     public void start()
     {
@@ -35,7 +35,7 @@ public class ConsoleController
         String region = "/en-us/";
         String id = "";
         PlayStationSearchResponse responseSearch = null;
-        PlayStationProductResponse responseProduct;
+        ProductMainResponse responseProduct;
         List<Product> productsList = List.of();
 
         while (true)
