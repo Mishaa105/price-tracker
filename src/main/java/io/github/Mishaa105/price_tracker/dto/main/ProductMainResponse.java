@@ -1,10 +1,10 @@
-package io.github.Mishaa105.price_tracker.dto.product;
+package io.github.Mishaa105.price_tracker.dto.main;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public record PlayStationProductResponse(Args args, ProductCache cache)
+public record ProductMainResponse(Args args, ProductCache cache)
 {
     public String getName()
     {
@@ -21,15 +21,15 @@ public record PlayStationProductResponse(Args args, ProductCache cache)
         return Optional.ofNullable(args).map(Args::productId).orElse(null);
     }
 
-    public List<Local> getListOfAvailablePriceData()
+    public List<Price> getListOfAvailablePriceData()
     {
-        List<Local> locals = new ArrayList<>();
+        List<Price> prices = new ArrayList<>();
 
         if (cache == null)
         {
-            return locals;
+            return prices;
         }
 
-        return cache.basePrice().stream().map(PriceData::local).toList();
+        return cache.basePrice().stream().map(PriceData::price).toList();
     }
 }
