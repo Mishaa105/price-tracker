@@ -1,34 +1,29 @@
 package io.github.Mishaa105.price_tracker.dto.search;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import io.github.Mishaa105.price_tracker.util.DynamicNodeParser;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public record ApolloState(Map<String, Product> products)
+public record ApolloState(Map<String, Product> productMap)
 {
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    public ApolloState(Map<String, Product> products)
+    public ApolloState(Map<String, Product> productMap)
     {
-        this.products = products != null ? products : new LinkedHashMap<>();
+        this.productMap = productMap != null ? productMap : new LinkedHashMap<>();
     }
 
     public Collection<Product> getProducts()
     {
-        return products.values();
+        return productMap.values();
     }
 
     @JsonAnySetter
     public void deserializationFieldsWithDynamicName(String key, JsonNode value)
     {
-
-        if (key.startsWith("Product:"))
-        {
-            products.put(key, mapper.treeToValue(value, Product.class));
-        }
+        String prefix = "Product:";
+        DynamicNodeParser.parseAndPut(key, value, Product.class, productMap, prefix);
     }
 }

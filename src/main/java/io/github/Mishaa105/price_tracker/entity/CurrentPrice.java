@@ -1,0 +1,46 @@
+package io.github.Mishaa105.price_tracker.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "current_prices")
+@Getter
+@Setter
+@NoArgsConstructor
+public class CurrentPrice
+{
+    public CurrentPrice(Integer originalPrice, Integer discountPrice)
+    {
+        this.originalPrice = originalPrice;
+        this.discountPrice = discountPrice;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Column
+    private Integer originalPrice;
+
+    @Column
+    private Integer discountPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "branding_id")
+    private Brand offerBrand;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    private Currency priceCurrencyCode;
+
+    @ManyToOne
+    @JoinColumn(name = "offer_id")
+    private Offer offer;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+}
