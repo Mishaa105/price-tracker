@@ -1,11 +1,11 @@
 package io.github.Mishaa105.price_tracker.controller;
 
-import io.github.Mishaa105.price_tracker.infrastructure.JsoupClient;
-import io.github.Mishaa105.price_tracker.dto.main.ProductMainResponse;
+import io.github.Mishaa105.price_tracker.dto.product.offer.ProductOfferResponse;
 import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
 import io.github.Mishaa105.price_tracker.dto.search.Product;
-import io.github.Mishaa105.price_tracker.service.ProductMainHtmlParser;
-import io.github.Mishaa105.price_tracker.service.SearchPageHtmlParser;
+import io.github.Mishaa105.price_tracker.infrastructure.client.JsoupClient;
+import io.github.Mishaa105.price_tracker.infrastructure.extractor.impl.ProductOfferExtractor;
+import io.github.Mishaa105.price_tracker.infrastructure.extractor.impl.SearchPageExtractor;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ public class ConsoleController
     Scanner scanner = new Scanner(System.in);
 
     private final JsoupClient jsoupClient;
-    private final SearchPageHtmlParser searchPageParser;
-    private final ProductMainHtmlParser productPageParser;
+    private final SearchPageExtractor searchPageParser;
+    private final ProductOfferExtractor productPageParser;
 
     public void start()
     {
@@ -35,7 +35,7 @@ public class ConsoleController
         String region = "/en-us/";
         String id = "";
         PlayStationSearchResponse responseSearch = null;
-        ProductMainResponse responseProduct;
+        ProductOfferResponse responseProduct;
         List<Product> productsList = List.of();
 
         while (true)

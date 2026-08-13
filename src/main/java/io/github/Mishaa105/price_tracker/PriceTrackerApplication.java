@@ -26,7 +26,7 @@ public class PriceTrackerApplication
             dataBaseUpdateService.bdSaveTest();
 //            controller.start();
         };
-        //Unavailable (gta 6 edition updater)
+
         //Большой скрипт и универсальный cache
     }
 }
