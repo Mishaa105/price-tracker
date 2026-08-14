@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-public class ProductBatch
+public class ProductAggregate
 {
     private final List<Product> products = new ArrayList<>();
     private final List<Offer> offers = new ArrayList<>();

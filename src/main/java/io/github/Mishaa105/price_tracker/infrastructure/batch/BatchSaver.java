@@ -1,9 +1,16 @@
 package io.github.Mishaa105.price_tracker.infrastructure.batch;
 
+import io.github.Mishaa105.price_tracker.entity.*;
 import io.github.Mishaa105.price_tracker.infrastructure.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -22,19 +29,48 @@ public class BatchSaver
     private final LanguageRepository languageRepository;
     private final GenreRepository genreRepository;
 
-    public void saveBatchToDb(ProductBatch batch)
+    @Transactional
+    public void saveBatchToDb(List<ProductAggregate> batch)
     {
-        storeClassificationRepository.saveAll(batch.getStoreClassifications());
-        publisherRepository.saveAll(batch.getPublishers());
-        platformRepository.saveAll(batch.getPlatforms());
-        languageRepository.saveAll(batch.getLanguages());
-        genreRepository.saveAll(batch.getGenres());
-        productRepository.saveAll(batch.getProducts());
-        brandRepository.saveAll(batch.getBrands());
-        currencyRepository.saveAll(batch.getCurrencies());
-        offerRepository.saveAll(batch.getOffers());
-        currentPriceRepository.saveAll(batch.getCurrentPrices());
-        allPriceRepository.saveAll(batch.getPrices());
+        Set<StoreClassification> allClassifications = new HashSet<>();
+        Set<Publisher> allPublishers = new HashSet<>();
+        Set<Platform> allPlatforms = new HashSet<>();
+        Set<Language> allLanguages = new HashSet<>();
+        Set<Genre> allGenres = new HashSet<>();
+        Set<Brand> allBrands = new HashSet<>();
+        Set<Currency> allCurrencies = new HashSet<>();
+
+        List<Product> allProducts = new ArrayList<>();
+        List<Offer> allOffers = new ArrayList<>();
+        List<CurrentPrice> allCurrentPrices = new ArrayList<>();
+        List<Price> allPrices = new ArrayList<>();
+
+        for (ProductAggregate product : batch)
+        {
+            allClassifications.addAll(product.getStoreClassifications());
+            allPublishers.addAll(product.getPublishers());
+            allPlatforms.addAll(product.getPlatforms());
+            allLanguages.addAll(product.getLanguages());
+            allGenres.addAll(product.getGenres());
+            allBrands.addAll(product.getBrands());
+            allCurrencies.addAll(product.getCurrencies());
+            allProducts.addAll(product.getProducts());
+            allOffers.addAll(product.getOffers());
+            allCurrentPrices.addAll(product.getCurrentPrices());
+            allPrices.addAll(product.getPrices());
+        }
+
+        storeClassificationRepository.saveAll(allClassifications);
+        publisherRepository.saveAll(allPublishers);
+        platformRepository.saveAll(allPlatforms);
+        languageRepository.saveAll(allLanguages);
+        genreRepository.saveAll(allGenres);
+        productRepository.saveAll(allProducts);
+        brandRepository.saveAll(allBrands);
+        currencyRepository.saveAll(allCurrencies);
+        offerRepository.saveAll(allOffers);
+        currentPriceRepository.saveAll(allCurrentPrices);
+        allPriceRepository.saveAll(allPrices);
         log.info("Батч сохранен в БД");
     }
 }
