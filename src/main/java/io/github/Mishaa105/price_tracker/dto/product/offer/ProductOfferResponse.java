@@ -21,9 +21,9 @@ public record ProductOfferResponse(Args args, OfferCache cache)
         return Optional.ofNullable(args).map(Args::productId).orElse(null);
     }
 
-    public List<Price> getListOfAvailablePriceData()
+    public List<PriceDto> getListOfAvailablePriceData()
     {
-        List<Price> prices = new ArrayList<>();
+        List<PriceDto> prices = new ArrayList<>();
 
         if (cache == null)
         {

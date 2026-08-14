@@ -15,6 +15,13 @@ public class RestClientConfig
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
                 .defaultHeader("apollographql-client-version", "0.112.1")
-                .defaultHeader("x-psn-store-locale-override", "en-US");
+                .defaultHeader("x-psn-store-locale-override", "en-US")
+                .defaultHeader("Sec-CH-UA", "\"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\", \"Not?A_Brand\";v=\"24\"")
+                .defaultHeader("Sec-CH-UA-Mobile", "?0")
+                .defaultHeader("Sec-CH-UA-Platform", "\"Windows\"")
+                .defaultHeader("Sec-Fetch-Dest", "empty")
+                .defaultHeader("Sec-Fetch-Mode", "cors")
+                .defaultHeader("Sec-Fetch-Site", "same-origin")
+                .defaultHeader("Accept-Encoding", "gzip, deflate, br");
     }
 }

@@ -23,7 +23,7 @@ public class PriceTrackerApplication
     {
         return _ ->
         {
-            dataBaseUpdateService.bdSaveTest();
+            dataBaseUpdateService.startFullDbUpdate();
 //            controller.start();
         };
 
