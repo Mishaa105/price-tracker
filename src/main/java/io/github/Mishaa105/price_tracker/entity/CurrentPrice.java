@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "current_prices")
+@Table(name = "current_prices", indexes = {@Index(name = "product_id_current_price_index", columnList = "product_id")})
 @Getter
 @Setter
 @NoArgsConstructor

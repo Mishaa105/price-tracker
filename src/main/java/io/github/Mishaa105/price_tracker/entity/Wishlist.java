@@ -9,7 +9,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "wishlist")
+@Table(name = "wishlist",
+        indexes = {
+                @Index(name = "wishlist_user_id_index", columnList = "user_id"),
+                @Index(name = "wishlist_product_id_index", columnList = "product_id")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_wishlist_user_product", columnNames = {"user_id", "product_id"})
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,10 +31,10 @@ public class Wishlist
     private LocalDateTime savingTime;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private Users userId;
 
     @ManyToOne
-    @JoinColumn(name = "productId")
+    @JoinColumn(name = "product_id")
     private Product productId;
 }

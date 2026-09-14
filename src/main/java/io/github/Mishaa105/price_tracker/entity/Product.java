@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {@Index(name = "name_product_index", columnList = "name")})
 @Getter
 @Setter
 @NoArgsConstructor
