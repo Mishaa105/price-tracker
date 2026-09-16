@@ -86,99 +86,121 @@ flowchart LR
 ## Проектирование данных
 
 ```mermaid
+## Проектирование данных
+
+```mermaid
 erDiagram
+    USERS {
+        UUID user_id PK
+        VARCHAR(255) email
+        VARCHAR(255) password
+        VARCHAR(255) name
+    }
+
+    WISHLIST {
+        BIGINT id PK
+        TIMESTAMP saving_time
+        UUID user_id FK
+        VARCHAR(255) product_id FK
+    }
+
     PRODUCTS {
-        string product_id PK
-        string name
-        string invariant_name
-        string preview_url
-        string description
-        string edition
-        string release_date
-        double average_rating
-        int ratings_count
-        int store_classification_id FK
-        int publisher_name_id FK
+        VARCHAR(255) product_id PK
+        VARCHAR(255) name
+        VARCHAR(255) invariant_name
+        VARCHAR(255) preview_url
+        TEXT description
+        VARCHAR(255) edition
+        VARCHAR(255) release_date
+        NUMERIC(3,2) average_rating
+        INT ratings_count
+        INT store_classification_id FK
+        INT publisher_name_id FK
     }
 
     PUBLISHERS {
-        int id PK
-        string name
+        INT id PK
+        VARCHAR(255) name
     }
 
     STORE_CLASSIFICATIONS {
-        int id PK
-        string type
+        INT id PK
+        VARCHAR(255) type
     }
 
     BRANDS {
-        int id PK
-        string brand
+        INT id PK
+        VARCHAR(255) brand
     }
 
     CURRENCIES {
-        int id PK
-        string currency
+        INT id PK
+        VARCHAR(255) currency
+        NUMERIC(12,4) exchangeRate
     }
 
     OFFERS {
-        int id PK
-        string offer_name
-        string start_date
-        string end_date
+        INT id PK
+        VARCHAR(255) offer_name
+        VARCHAR(255) start_date
+        VARCHAR(255) end_date
     }
 
     GENRES {
-        int id PK
-        string genre
+        INT id PK
+        VARCHAR(255) genre
     }
 
     LANGUAGES {
-        int id PK
-        string language
-        string type
+        INT id PK
+        VARCHAR(255) language
+        VARCHAR(255) type
     }
 
     PLATFORMS {
-        int id PK
-        string platform
+        INT id PK
+        VARCHAR(255) platform
     }
 
     CURRENT_PRICES {
-        long id PK
-        int original_price
-        int discount_price
-        int branding_id FK
-        int currency_id FK
-        int offer_id FK
-        string product_id FK
+        BIGINT id PK
+        INT original_price
+        INT discount_price
+        INT branding_id FK
+        INT currency_id FK
+        INT offer_id FK
+        VARCHAR(255) product_id FK
     }
 
     ALL_PRICES {
-        long id PK
-        int original_price
-        int discount_price
-        int branding_id FK
-        int currency_id FK
-        date saving_time
-        int offer_id FK
-        string product_id FK
+        BIGINT id PK
+        INT original_price
+        INT discount_price
+        INT branding_id FK
+        INT currency_id FK
+        DATE saving_time
+        INT offer_id FK
+        VARCHAR(255) product_id FK
     }
 
     PRODUCT_PLATFORMS {
-        string product_id PK
-        int platform_id PK
+        VARCHAR(255) product_id PK
+        INT platform_id PK
     }
 
     PRODUCT_LANGUAGES {
-        string product_id PK
-        int language_id PK
+        VARCHAR(255) product_id PK
+        INT language_id PK
     }
 
     PRODUCT_GENRES {
-        string product_id PK
-        int genre_id PK
+        VARCHAR(255) product_id PK
+        INT genre_id PK
     }
+
+    %% Связи пользователей и списка желаемого
+    USERS ||--o{ WISHLIST : "has"
+    PRODUCTS ||--o{ WISHLIST : "inWishlist"
 
     %% Связи справочников с товарами
     PUBLISHERS ||--o{ PRODUCTS : "publishes"
@@ -205,6 +227,35 @@ erDiagram
     CURRENCIES ||--o{ ALL_PRICES : "priceCurrencyCode"
     OFFERS ||--o{ ALL_PRICES : "offer"
     PRODUCTS ||--o{ ALL_PRICES : "product"
+```
+
+Выбранная структура выдержит нагрузку, так как данные, к которым пользователь часто обращается, и данные, которые хранят историческую информацию, разделены по таблицам, поля, по которым будет осуществляться поиск или сортировка проиндексированы, также реализовано сохранение батчами, поэтому база данных не будет нагружена тысячами SQL-запросами. Все это позволяет программе работать с высоким уровнем производительности и без перегрузок.
+## Архитектурные схемы
+
+**System context diagram**
+
+```mermaid
+flowchart TD
+    PS["[External System]<br/>PlayStation Store<br/><i>Магазин PlayStation</i>"]
+    FA["[External System]<br/>Frankfurter API<br/><i>API с данными о курсах валют</i>"]
+    User(("[Person]<br/>Пользователь<br/><i>Пользователь системы</i>"))
+    PT["[Software System]<br/>Price Tracker<br/><i>Трекер цен</i>"]
+    NS["[External System]<br/>Notification Service<br/><i>Сервис для отправки уведомлений</i>"]
+
+    PT -.->|Запрашивает данные о товарах| PS
+    PT -.->|Запрашивает данные о валютах| FA
+    User -->|Взаимодействует с| PT
+    PT -.->|Отправляет сообщение пользователю, используя| NS
+    NS -.->|Отправляет сообщение| User
+
+    %% Настройки стилей для C4
+    classDef system fill:#1168bd,stroke:#0b4884,color:#ffffff,stroke-width:2px;
+    classDef external fill:#999999,stroke:#666666,color:#ffffff,stroke-width:1px;
+    classDef actor fill:#08427b,stroke:#052e56,color:#ffffff,font-weight:bold;
+
+    class PT system;
+    class PS,FA,NS external;
+    class User actor;
 ```
 
 Выбранная структура выдержит нагрузку, так как данные, к которым пользователь часто обращается, и данные, которые хранят историческую информацию, разделены по таблицам, поля, по которым будет осуществляться поиск или сортировка проиндексированы, также реализовано сохранение батчами, поэтому база данных не будет нагружена тысячами SQL-запросами. Все это позволяет программе работать с высоким уровнем производительности и без перегрузок.
