@@ -86,9 +86,6 @@ flowchart LR
 ## Проектирование данных
 
 ```mermaid
-## Проектирование данных
-
-```mermaid
 erDiagram
     USERS {
         UUID user_id PK
