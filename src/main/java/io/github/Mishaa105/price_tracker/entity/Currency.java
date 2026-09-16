@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -26,8 +27,8 @@ public class Currency
     @Column
     private String currency;
 
-    @Column
-    private Double exchangeRate;
+    @Column(name = "exchange_rate", precision = 12, scale = 4)
+    private BigDecimal exchangeRate;
 
     @OneToMany(mappedBy = "priceCurrencyCode")
     private List<CurrentPrice> currentPrices;
