@@ -26,6 +26,9 @@ public class Currency
     @Column
     private String currency;
 
+    @Column
+    private Double exchangeRate;
+
     @OneToMany(mappedBy = "priceCurrencyCode")
     private List<CurrentPrice> currentPrices;
 
