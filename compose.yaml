@@ -5,8 +5,8 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=price_tracker_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret_pass
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -16,6 +16,37 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  frankfurter:
+    image: lineofflight/frankfurter
+    container_name: price-tracker-frankfurter
+    restart: always
+    init: true
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_URL=sqlite:///data/db.sqlite3
+    volumes:
+      - ./data:/data
+
+
+  app:
+    build: .
+    container_name: price-tracker-app
+    restart: always
+    environment:
+      - DB_URL=jdbc:postgresql://postgres-db:5432/price_tracker_db
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      frankfurter:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
 
 volumes:
   pg-data:
