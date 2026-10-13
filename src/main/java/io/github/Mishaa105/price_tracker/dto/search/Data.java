@@ -1,3 +1,3 @@
 package io.github.Mishaa105.price_tracker.dto.search;
 
-public record Media(String url) {}
+public record Data(UniversalSearch universalSearch) {}

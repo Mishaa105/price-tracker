@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.dto.search;
+package io.github.Mishaa105.price_tracker.dto.depricated_search;
 
 import java.util.List;
 

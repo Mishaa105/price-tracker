@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.service;
+package io.github.Mishaa105.price_tracker.service.update;
 
 import io.github.Mishaa105.price_tracker.dto.exchange_rate.Data;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.fetcher.ExchangeRateDataFetcher;

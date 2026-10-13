@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.service;
+package io.github.Mishaa105.price_tracker.service.update;
 
 import io.github.Mishaa105.price_tracker.config.Executor;
 import io.github.Mishaa105.price_tracker.dto.product.ProductResponse;
@@ -55,7 +55,7 @@ public class PlayStationDataUpdateService
                         int offset = 0;
                         while (true)
                         {
-                            String url = graphQlBuilder.buildUrl(productType, platform, sortType, genre, pageSize, offset);
+                            String url = graphQlBuilder.buildProductsUrl(productType, platform, sortType, genre, pageSize, offset);
                             String rawJson = playStationClient.getData(url, region.getLocaleHeaderCode());
                             List<String> listOfId = catalogDataFetcher.getListOfProductsId(rawJson);
                             List<ProductResponse> productResponseList = Collections.synchronizedList(new ArrayList<>());
