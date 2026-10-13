@@ -7,11 +7,11 @@ import io.github.Mishaa105.price_tracker.enums.graphql.PlatformEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.ProductTypeEnum;
 import io.github.Mishaa105.price_tracker.enums.graphql.SortByEnum;
 import io.github.Mishaa105.price_tracker.enums.regions.Regions;
-import io.github.Mishaa105.price_tracker.infrastructure.batch.BatchBuilder;
-import io.github.Mishaa105.price_tracker.infrastructure.batch.BatchSaver;
-import io.github.Mishaa105.price_tracker.infrastructure.batch.ProductAggregate;
+import io.github.Mishaa105.price_tracker.infrastructure.saver.playstation.batch.BatchBuilder;
+import io.github.Mishaa105.price_tracker.infrastructure.saver.playstation.batch.BatchSaver;
+import io.github.Mishaa105.price_tracker.infrastructure.saver.playstation.batch.ProductAggregate;
 import io.github.Mishaa105.price_tracker.infrastructure.client.GraphQlUrlBuilder;
-import io.github.Mishaa105.price_tracker.infrastructure.client.RestApiClient;
+import io.github.Mishaa105.price_tracker.infrastructure.client.PlayStationClient;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.fetcher.CatalogDataFetcher;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.fetcher.ProductDataFetcher;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +27,10 @@ import java.util.concurrent.Semaphore;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DataBaseUpdateService
+public class PlayStationDataUpdateService
 {
     private final CatalogDataFetcher catalogDataFetcher;
-    private final RestApiClient restApiClient;
+    private final PlayStationClient playStationClient;
     private final ProductDataFetcher productDataFetcher;
     private final GraphQlUrlBuilder graphQlBuilder;
     private final BatchBuilder batchBuilder;
@@ -56,7 +56,7 @@ public class DataBaseUpdateService
                         while (true)
                         {
                             String url = graphQlBuilder.buildUrl(productType, platform, sortType, genre, pageSize, offset);
-                            String rawJson = restApiClient.getData(url, region.getLocaleHeaderCode());
+                            String rawJson = playStationClient.getData(url, region.getLocaleHeaderCode());
                             List<String> listOfId = catalogDataFetcher.getListOfProductsId(rawJson);
                             List<ProductResponse> productResponseList = Collections.synchronizedList(new ArrayList<>());
                             List<CompletableFuture<Void>> futures = new ArrayList<>();

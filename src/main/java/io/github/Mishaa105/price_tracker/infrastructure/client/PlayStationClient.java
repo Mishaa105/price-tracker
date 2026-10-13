@@ -6,11 +6,11 @@ import org.springframework.web.client.RestClient;
 import java.net.URI;
 
 @Component
-public class RestApiClient
+public class PlayStationClient
 {
     private final RestClient restClient;
 
-    public RestApiClient(RestClient.Builder builder)
+    public PlayStationClient(RestClient.Builder builder)
     {
         this.restClient = builder.build();
     }

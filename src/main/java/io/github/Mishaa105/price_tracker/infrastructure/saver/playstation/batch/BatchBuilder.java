@@ -1,4 +1,4 @@
-package io.github.Mishaa105.price_tracker.infrastructure.batch;
+package io.github.Mishaa105.price_tracker.infrastructure.saver.playstation.batch;
 
 import io.github.Mishaa105.price_tracker.dto.product.ProductResponse;
 import io.github.Mishaa105.price_tracker.dto.product.offer.PriceDto;
