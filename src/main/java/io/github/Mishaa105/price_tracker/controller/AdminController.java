@@ -1,7 +1,7 @@
-package io.github.Mishaa105.price_tracker.controller.admin;
+package io.github.Mishaa105.price_tracker.controller;
 
-import io.github.Mishaa105.price_tracker.service.ExchangeRateUpdateService;
-import io.github.Mishaa105.price_tracker.service.PlayStationDataUpdateService;
+import io.github.Mishaa105.price_tracker.service.update.ExchangeRateUpdateService;
+import io.github.Mishaa105.price_tracker.service.update.PlayStationDataUpdateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +23,7 @@ public class AdminController
         playStationDataUpdateService.startFullDbUpdate();
     }
 
-    @PostMapping("jobs/update-exchange-rates")
+    @PostMapping("jobs/update-rates")
     public void startExchangeRatesUpdate()
     {
         exchangeRateUpdateService.startExchangeRateUpdate();

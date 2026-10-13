@@ -1,8 +1,8 @@
 package io.github.Mishaa105.price_tracker.controller;
 
 import io.github.Mishaa105.price_tracker.dto.product.offer.ProductOfferResponse;
-import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
-import io.github.Mishaa105.price_tracker.dto.search.Product;
+import io.github.Mishaa105.price_tracker.dto.depricated_search.PlayStationSearchResponse;
+import io.github.Mishaa105.price_tracker.dto.depricated_search.Product;
 import io.github.Mishaa105.price_tracker.infrastructure.client.JsoupClient;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.impl.ProductOfferExtractor;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.impl.SearchPageExtractor;

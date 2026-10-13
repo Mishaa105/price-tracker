@@ -15,12 +15,11 @@ public class PriceTrackerApplication
     }
 
 //    @Bean
-//    public CommandLineRunner run(ConsoleController controller, DataBaseUpdateService dataBaseUpdateService)
+//    public CommandLineRunner run(PlayStationClient client)
 //    {
 //        return _ ->
 //        {
-//            dataBaseUpdateService.startFullDbUpdate();
-//            controller.start();
+//
 //        };
 //
 //        //Большой скрипт и универсальный cache

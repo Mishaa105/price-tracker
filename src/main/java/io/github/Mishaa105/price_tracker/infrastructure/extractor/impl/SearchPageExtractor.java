@@ -1,6 +1,6 @@
 package io.github.Mishaa105.price_tracker.infrastructure.extractor.impl;
 
-import io.github.Mishaa105.price_tracker.dto.search.PlayStationSearchResponse;
+import io.github.Mishaa105.price_tracker.dto.depricated_search.PlayStationSearchResponse;
 import io.github.Mishaa105.price_tracker.infrastructure.extractor.AbstractHtmlJsonExtractor;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
