@@ -3,10 +3,7 @@ package io.github.Mishaa105.price_tracker.controller;
 import io.github.Mishaa105.price_tracker.service.wishlist.WishlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -18,10 +15,17 @@ public class WishlistController
 {
     private final WishlistService wishlistService;
 
-    @PostMapping("/api/v1/wishlist")
+    @PostMapping
     void addProductToWishlistByUserid(@RequestParam String productId)
     {
         UUID currentUserId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         wishlistService.addProductToWishlist(productId, currentUserId);
+    }
+
+    @DeleteMapping
+    void deleteProductFromWishlistByUserid(@RequestParam String productId)
+    {
+        UUID currentUserId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        wishlistService.deleteProductFromWishlist(productId, currentUserId);
     }
 }

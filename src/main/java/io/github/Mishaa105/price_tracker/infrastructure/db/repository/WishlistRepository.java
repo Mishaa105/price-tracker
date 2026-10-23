@@ -16,4 +16,9 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long>
     @Query(value = "INSERT INTO Wishlist(product_id, user_id, saving_time) VALUES(:productId, :userId, CURRENT_TIMESTAMP ) " +
             "ON CONFLICT(product_id, user_id) DO NOTHING", nativeQuery = true)
     void addProductToWishlistByUserId(@Param("productId") String productId, @Param("userId") UUID userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM wishlist WHERE product_id = :productId AND user_id = :userId", nativeQuery = true)
+    void deleteProductFromWishlistByUserId(@Param("productId") String productId, @Param("userId") UUID userId);
 }

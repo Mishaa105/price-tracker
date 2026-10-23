@@ -18,4 +18,9 @@ public class WishlistService
     {
         wishlistRepository.addProductToWishlistByUserId(productId, userID);
     }
+
+    public void deleteProductFromWishlist(String productId, UUID userID)
+    {
+        wishlistRepository.deleteProductFromWishlistByUserId(productId, userID);
+    }
 }
