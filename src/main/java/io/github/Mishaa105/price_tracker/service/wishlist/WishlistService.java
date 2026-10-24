@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -14,13 +15,18 @@ public class WishlistService
 {
     private final WishlistRepository wishlistRepository;
 
-    public void addProductToWishlist(String productId, UUID userID)
+    public void addProductToWishlist(String productId, UUID userId)
     {
-        wishlistRepository.addProductToWishlistByUserId(productId, userID);
+        wishlistRepository.addProductToWishlistByUserId(productId, userId);
     }
 
-    public void deleteProductFromWishlist(String productId, UUID userID)
+    public void deleteProductFromWishlist(String productId, UUID userId)
     {
-        wishlistRepository.deleteProductFromWishlistByUserId(productId, userID);
+        wishlistRepository.deleteProductFromWishlistByUserId(productId, userId);
+    }
+
+    public List<String> getAllProductsFromWishlist(UUID userId)
+    {
+        return wishlistRepository.getAllProductsFromWishlistByUserId(userId);
     }
 }

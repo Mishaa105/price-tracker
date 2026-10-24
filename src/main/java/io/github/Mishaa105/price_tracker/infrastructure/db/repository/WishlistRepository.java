@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WishlistRepository extends JpaRepository<Wishlist, Long>
@@ -21,4 +22,7 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long>
     @Modifying
     @Query(value = "DELETE FROM wishlist WHERE product_id = :productId AND user_id = :userId", nativeQuery = true)
     void deleteProductFromWishlistByUserId(@Param("productId") String productId, @Param("userId") UUID userId);
+
+    @Query(value = "SELECT w.product_id FROM wishlist w WHERE w.user_id = :userId", nativeQuery = true)
+    List<String> getAllProductsFromWishlistByUserId(@Param("userId") UUID userId);
 }

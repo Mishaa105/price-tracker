@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -27,5 +28,12 @@ public class WishlistController
     {
         UUID currentUserId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         wishlistService.deleteProductFromWishlist(productId, currentUserId);
+    }
+
+    @GetMapping
+    List<String> getAllProductsFromWishlistByUserid()
+    {
+        UUID currentUserId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        return wishlistService.getAllProductsFromWishlist(currentUserId);
     }
 }
