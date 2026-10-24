@@ -18,15 +18,19 @@ public class WishlistService
     public void addProductToWishlist(String productId, UUID userId)
     {
         wishlistRepository.addProductToWishlistByUserId(productId, userId);
+        log.info("Product with ID {} successfully added to user {} wishlist", productId, userId);
     }
 
     public void deleteProductFromWishlist(String productId, UUID userId)
     {
         wishlistRepository.deleteProductFromWishlistByUserId(productId, userId);
+        log.info("Product with ID {} successfully removed from user {} wishlist", productId, userId);
     }
 
     public List<String> getAllProductsFromWishlist(UUID userId)
     {
-        return wishlistRepository.getAllProductsFromWishlistByUserId(userId);
+        List<String> wishlist = wishlistRepository.getAllProductsFromWishlistByUserId(userId);
+        log.info("User {} wishlist successfully receipted", userId);
+        return wishlist;
     }
 }
