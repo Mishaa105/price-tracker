@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -29,6 +31,10 @@ public class Currency
 
     @Column(name = "exchange_rate", precision = 12, scale = 4)
     private BigDecimal exchangeRate;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "priceCurrencyCode")
     private List<CurrentPrice> currentPrices;
