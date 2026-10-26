@@ -1,5 +1,6 @@
 package io.github.Mishaa105.price_tracker.controller;
 
+import io.github.Mishaa105.price_tracker.service.product_page.ProductPageService;
 import io.github.Mishaa105.price_tracker.service.search.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,10 +18,17 @@ import java.util.List;
 public class ProductController
 {
     private final SearchService searchService;
+    private final ProductPageService productPageService;
 
-    @GetMapping
+    @GetMapping("/search")
     List<String> search(@RequestParam String query)
     {
         return searchService.search(query);
+    }
+
+    @GetMapping("/page")
+    String getProductPage(@RequestParam String productId)
+    {
+        return productPageService.getProductPage(productId);
     }
 }
