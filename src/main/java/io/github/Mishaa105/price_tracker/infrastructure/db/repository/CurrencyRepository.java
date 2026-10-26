@@ -13,9 +13,4 @@ public interface CurrencyRepository extends JpaRepository<Currency, Integer>
     @Modifying
     @Query("UPDATE Currency c SET c.exchangeRate = :newRate WHERE c.currency = :currencyName")
     int updateExchangeRatesByCurrency(@Param("currencyName") String currencyName, @Param("newRate") Double newRate);
-
-    @Transactional
-    @Modifying
-    @Query("INSERT INTO Currency(currency, exchangeRate) VALUES(:currencyName, :rate)")
-    void createNewCurrencyWithExchangeRate(@Param("currencyName") String currencyName, @Param("rate") Double rate);
 }

@@ -1,11 +1,13 @@
 package io.github.Mishaa105.price_tracker.infrastructure.saver.frankfurter;
 
 import io.github.Mishaa105.price_tracker.dto.exchange_rate.Data;
+import io.github.Mishaa105.price_tracker.entity.Currency;
 import io.github.Mishaa105.price_tracker.infrastructure.db.repository.CurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -30,7 +32,9 @@ public class ExchangeRateSaver
             }
             else
             {
-                currencyRepository.createNewCurrencyWithExchangeRate(currencyName, exchangeRate);
+                Currency currency = new Currency(currencyName);
+                currency.setExchangeRate(BigDecimal.valueOf(exchangeRate));
+                currencyRepository.save(currency);
                 log.debug("{} создан", currencyName);
             }
         }
