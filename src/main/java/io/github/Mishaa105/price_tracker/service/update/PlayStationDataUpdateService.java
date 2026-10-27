@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 @Slf4j
@@ -46,6 +48,8 @@ public class PlayStationDataUpdateService
 
         for (Regions region : Regions.values())
         {
+            Set<String> regionProcessedIds = ConcurrentHashMap.newKeySet();
+
             for (ProductTypeEnum productType : ProductTypeEnum.values())
             {
                 for (PlatformEnum platform : PlatformEnum.values())
@@ -75,6 +79,11 @@ public class PlayStationDataUpdateService
                                     continue;
                                 }
 
+                                if (!regionProcessedIds.add(id))
+                                {
+                                    continue;
+                                }
+
                                 CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
                                 {
                                     try
@@ -82,7 +91,10 @@ public class PlayStationDataUpdateService
                                         semaphore.acquire();
                                         Thread.sleep((long) (Math.random() * 100 + 50));
                                         ProductResponse productResponse = productDataFetcher.getProductResponse(region.getRegionCode(), id);
-                                        if (productResponse != null)
+                                        log.debug("Обработка id {}", id);
+                                        if (productResponse != null && productResponse.genresResponse() != null
+                                        && productResponse.languagesResponse() != null && productResponse.mediaResponse() != null
+                                        && productResponse.metadataResponse() != null && productResponse.offerResponse() != null)
                                         {
                                             productResponseList.add(productResponse);
                                         }
