@@ -1,5 +1,6 @@
 package io.github.Mishaa105.price_tracker.infrastructure.db.repository;
 
+import io.github.Mishaa105.price_tracker.dto.main_page.CurrentPriceDto;
 import io.github.Mishaa105.price_tracker.dto.product_page.CurrentPricePoint;
 import io.github.Mishaa105.price_tracker.dto.product_page.PricePoint;
 import io.github.Mishaa105.price_tracker.entity.Product;
@@ -72,4 +73,13 @@ public interface ProductRepository extends JpaRepository<Product, String>
             "cp.originalPrice, b.brand, c.currency, o.endDate, o.startDate) FROM Product p " +
             "LEFT JOIN p.currentPrices cp LEFT JOIN cp.offerBrand b LEFT JOIN cp.priceCurrencyCode c LEFT JOIN cp.offer o WHERE p.productId = :productId")
     List<CurrentPricePoint> getProductCurrentPrices(@Param("productId") String productId);
+
+    @Query(value = "SELECT p.product_id FROM products p WHERE ratings_count > 1000 " +
+            "AND p.release_date >= :yearAgoDate ORDER BY p.release_date DESC LIMIT 48", nativeQuery = true)
+    List<String> getProductIdsForMainPage(@Param(("yearAgoDate")) String yearAgoDate);
+
+    @Query("SELECT new io.github.Mishaa105.price_tracker.dto.main_page.CurrentPriceDto(cp.discountPrice, " +
+            "cp.originalPrice, b.brand, c.currency) FROM Product p " +
+            "LEFT JOIN p.currentPrices cp LEFT JOIN cp.offerBrand b LEFT JOIN cp.priceCurrencyCode c WHERE p.productId = :productId")
+    List<CurrentPriceDto> getProductCurrentPricesForMainPage(@Param("productId") String productId);
 }
