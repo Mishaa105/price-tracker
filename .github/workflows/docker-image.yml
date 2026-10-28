@@ -15,6 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and start Docker Compose stack
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: docker compose up -d --build
 
       - name: Check container logs
