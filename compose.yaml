@@ -16,6 +16,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 15s
 
   frankfurter:
     image: lineofflight/frankfurter
@@ -44,7 +45,7 @@ services:
       postgres-db:
         condition: service_healthy
       frankfurter:
-        condition: service_healthy
+        condition: service_started
     ports:
       - "8080:8080"
 
