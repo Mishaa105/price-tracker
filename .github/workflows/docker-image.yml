@@ -1,0 +1,25 @@
+name: CI/CD with Docker Compose
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  compose-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and start Docker Compose stack
+        run: docker compose up -d --build
+
+      - name: Check container logs
+        if: always()
+        run: docker compose logs
+
+      - name: Check running containers
+        run: docker compose ps
