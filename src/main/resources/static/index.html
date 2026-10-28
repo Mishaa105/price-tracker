@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Price tracker MVP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1>PRICE TRACKER (MVP)</h1>
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Введите название товара" aria-label="Поиск игр">
+        </form>
+    </header>
+
+    <main class="container">
+        <section id="home-view">
+            <h2>Интересное</h2>
+            <div id="home-grid" class="card-grid"></div>
+        </section>
+
+        <section id="search-view" class="hidden">
+            <div class="search-header">
+                <button id="back-btn">&larr; На главную</button>
+                <h2>Результаты поиска</h2>
+            </div>
+            <div id="search-grid" class="card-grid"></div>
+        </section>
+
+        <section id="product-view" class="hidden">
+            <div class="search-header">
+                <button id="product-back-btn">&larr; Назад</button>
+                <h2>Информация о товаре</h2>
+            </div>
+            <div id="product-details"></div>
+            <div class="chart-container">
+                <h3>История изменения цены</h3>
+                <canvas id="priceChart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
