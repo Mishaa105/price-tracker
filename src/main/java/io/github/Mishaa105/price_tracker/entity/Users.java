@@ -1,5 +1,6 @@
 package io.github.Mishaa105.price_tracker.entity;
 
+import io.github.Mishaa105.price_tracker.enums.auth.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,11 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Users
 {
-    public Users(String email, String password, String name)
+    public Users(String email, String password, String name, Role role)
     {
         this.email = email;
         this.password = password;
         this.name = name;
+        this.role = role;
     }
 
     @Id
@@ -34,6 +36,10 @@ public class Users
 
     @Column
     private String name;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "userId")
     private Set<Wishlist> wishlist;

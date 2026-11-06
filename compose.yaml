@@ -7,6 +7,7 @@ services:
       - POSTGRES_DB=price_tracker_db
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - LOG_PATH=/app/logs
     ports:
       - "5432:5432"
     volumes:
@@ -46,8 +47,8 @@ services:
         condition: service_healthy
       frankfurter:
         condition: service_started
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
 
 volumes:
   pg-data:
