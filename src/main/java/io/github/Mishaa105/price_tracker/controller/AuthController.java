@@ -1,5 +1,7 @@
 package io.github.Mishaa105.price_tracker.controller;
 
+import io.github.Mishaa105.price_tracker.dto.auth.LoginRequest;
+import io.github.Mishaa105.price_tracker.dto.auth.LoginResponse;
 import io.github.Mishaa105.price_tracker.dto.auth.RegisterRequest;
 import io.github.Mishaa105.price_tracker.service.auth.AuthService;
 import jakarta.validation.Valid;
@@ -15,9 +17,15 @@ public class AuthController
 {
     private final AuthService authService;
 
-    @PostMapping
-    public void register(@Valid @RequestBody RegisterRequest request)
+    @PostMapping("/register")
+    public void register(@Valid @RequestBody RegisterRequest registerRequest)
     {
-        authService.signUp(request);
+        authService.signUp(registerRequest);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest)
+    {
+        return authService.signIn(loginRequest);
     }
 }

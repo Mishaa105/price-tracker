@@ -17,6 +17,11 @@ spring:
     deserialization:
       ACCEPT_SINGLE_VALUE_AS_ARRAY: true
 
+  config:
+    import: optional:file:.env[.properties]
+
 app:
   playstation:
     base-url: https://store.playstation.com
+  jwt:
+    secret-key: ${SECRET_KEY}
